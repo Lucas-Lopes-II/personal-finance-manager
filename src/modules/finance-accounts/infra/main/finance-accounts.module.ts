@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { FinanceAccountsController } from '@finance-accounts/infra/main';
+import { FinanceAccountsController } from './finance-accounts.controller';
 
 @Module({
   controllers: [FinanceAccountsController],
