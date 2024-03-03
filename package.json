@@ -28,9 +28,9 @@
     "migration:run": "npm run build & npm run typeorm migration:run -- -d ./src/shared/infra/database/data-source.ts",
     "migration:revert": "npm run build & npm run typeorm -- -d ./src/shared/infra/database/data-source.ts migration:revert",
     "typeorm:local": "npx dotenv-cli -e .env.local -- ts-node ./node_modules/typeorm/cli",
-    "migration:generate:local": "npm run build:local & npm run typeorm:local -- -d ./src/shared/infra/database/data-source.ts migration:generate ./src/shared/infra/database/migrations/%npm_config_name%",
-    "migration:run:local": "npm run build:local & npm run typeorm:local migration:run -- -d ./src/shared/infra/database/data-source.ts",
-    "migration:revert:local": "npm run build:local & npm run typeorm:local -- -d ./src/shared/infra/database/data-source.ts migration:revert",
+    "migration:generate:local": "npm run build & npm run typeorm:local -- -d ./src/shared/infra/database/data-source.ts migration:generate ./src/shared/infra/database/migrations/%npm_config_name%",
+    "migration:run:local": "npm run build & npm run typeorm:local migration:run -- -d ./src/shared/infra/database/data-source.ts",
+    "migration:revert:local": "npm run build & npm run typeorm:local -- -d ./src/shared/infra/database/data-source.ts migration:revert",
     "prepare": "husky"
   },
   "dependencies": {

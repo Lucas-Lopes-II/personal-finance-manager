@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   PrimaryColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import {
   IBaseEntityDB,
@@ -20,7 +19,6 @@ export class EntityTypeOrm implements IBaseEntityDB {
   @CreateDateColumn({ nullable: true, name: 'created_at' })
   createdAt?: Date;
 
-  @UpdateDateColumn({ nullable: true, name: 'updated_at' })
   @Column({ nullable: true })
   status?: string;
 }
