@@ -1,0 +1,20 @@
+import { DefaultUseCase } from '@shared/domain/usecases';
+import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
+import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
+import { IUserRepository } from '@users/domain/repositories';
+import { userRepositoryFactory } from '@users/infra/data/repositories';
+import { CreateFinanceAccount } from '@finance-accounts/application/usecases';
+
+export class FinanceAccountUseCasesFactory {
+  private static readonly financeAccountRepository: IFinanceAccountRepository =
+    FinanceAccountRepositoryFactory.create();
+  private static readonly userRepository: IUserRepository =
+    userRepositoryFactory();
+
+  public static createFinanceAccount(): DefaultUseCase {
+    return new CreateFinanceAccount.UseCase(
+      this.financeAccountRepository,
+      this.userRepository,
+    );
+  }
+}
