@@ -57,5 +57,17 @@ export class UserRepository
       where: { email: email.toLowerCase() },
     });
   }
+
+  public findById(
+    id: string,
+    fields: (keyof UserProps)[] = [],
+  ): Promise<UserProps | Partial<UserProps>> {
+    const select = this.createSelectByFields(fields);
+
+    return this.userRepo.findOne({
+      select,
+      where: { id: id },
+    });
+  }
 }
 0;
