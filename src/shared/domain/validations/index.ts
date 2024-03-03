@@ -9,4 +9,5 @@ export * from './max-value-field.validation';
 export * from './min-length-field.validation';
 export * from './min-value-field.validation';
 export * from './strong-password.validation';
+export * from './iso-date.validation';
 // export * from './'
