@@ -15,7 +15,8 @@
     "paths": {
      "@shared/*": ["src/shared/*"],
      "@users/*": ["src/modules/users/*"],
-     "@auth/*": ["src/modules/auth/*"]
+     "@auth/*": ["src/modules/auth/*"],
+     "@finance-accounts/*": ["src/modules/finance-accounts/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
