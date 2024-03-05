@@ -81,4 +81,62 @@ describe('FinanceAccount unit tests', () => {
       );
     });
   });
+
+  describe('addUser', () => {
+    it('should add an user in FinanceAccount correctly', () => {
+      const financeAccount = FinanceAccountFactory.create({
+        ...data,
+        users: [randomUUID(), randomUUID()],
+      });
+      financeAccount.addUser(randomUUID());
+      const result = financeAccount.toJSON();
+
+      expect(result).toStrictEqual({
+        id: data.id,
+        name: 'test',
+        users: financeAccount.users,
+        date: data.date,
+      });
+    });
+
+    it('should throw a BadRequestError if user is already added', () => {
+      const someUser = randomUUID();
+      const financeAccount = FinanceAccountFactory.create({
+        ...data,
+        users: [someUser, randomUUID()],
+      });
+
+      expect(() => financeAccount.addUser(someUser)).toThrow(
+        new BadRequestError('this user is already added'),
+      );
+    });
+
+    it('should throw a BadRequestError if account already has five users', () => {
+      const financeAccount = FinanceAccountFactory.create({
+        ...data,
+        users: [
+          randomUUID(),
+          randomUUID(),
+          randomUUID(),
+          randomUUID(),
+          randomUUID(),
+        ],
+      });
+
+      expect(() => financeAccount.addUser(randomUUID())).toThrow(
+        new BadRequestError('account should have only five users'),
+      );
+    });
+
+    it('should throw a BadRequestError if userId is invalid', () => {
+      const financeAccount = FinanceAccountFactory.create({
+        ...data,
+        users: [randomUUID(), randomUUID()],
+      });
+
+      expect(() => financeAccount.addUser('worng userId')).toThrow(
+        new BadRequestError('user id in invalid format'),
+      );
+    });
+  });
 });
