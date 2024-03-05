@@ -6,18 +6,24 @@ import {
 } from '@finance-accounts/infra/data/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { FinanceAccountProps } from '@finance-accounts/domain/entities';
+import { DatabaseUtils } from '@shared/infra/database';
 
-export class FinanceAccountRepository implements IFinanceAccountRepository {
+export class FinanceAccountRepository
+  extends DatabaseUtils<FinanceAccountProps>
+  implements IFinanceAccountRepository
+{
   public static instance: FinanceAccountRepository | null = null;
   private financeAccountRepo: Repository<FinanceAccountEntity>;
   private financeAccountUserRepo: Repository<FinanceAccountUserEntity>;
-  protected allowedFields: (keyof FinanceAccountEntity)[] = [
+  protected allowedFields: (keyof FinanceAccountProps)[] = [
     'id',
     'name',
     'date',
+    'users',
   ];
 
   private constructor(protected readonly dataSource: DataSource) {
+    super();
     this.financeAccountRepo = dataSource.getRepository(FinanceAccountEntity);
     this.financeAccountUserRepo = dataSource.getRepository(
       FinanceAccountUserEntity,
@@ -65,7 +71,6 @@ export class FinanceAccountRepository implements IFinanceAccountRepository {
 
     const addedUsers = finaceAccountUserList.map((item) => item.user?.['id']);
     const users = data.users.filter((user) => !addedUsers.includes(user));
-    if (users.length === 0) return;
 
     const createdFinaceAccountUsers = users.map((userId) => {
       return this.financeAccountUserRepo.create({
@@ -76,5 +81,36 @@ export class FinanceAccountRepository implements IFinanceAccountRepository {
     });
 
     await this.financeAccountUserRepo.save(createdFinaceAccountUsers);
+  }
+
+  public async findById(
+    id: string,
+    fields: (keyof FinanceAccountProps)[] = [],
+  ): Promise<FinanceAccountProps | Partial<FinanceAccountProps>> {
+    const select = this.createQueryBuilderSelectByFields(
+      'financeAccount',
+      fields,
+    );
+
+    const financeAccount = await this.financeAccountRepo
+      .createQueryBuilder('financeAccount')
+      .select(select)
+      .leftJoinAndSelect(
+        'financeAccount.finaceAccountUser',
+        'finaceAccountUser',
+      )
+      .leftJoinAndSelect('finaceAccountUser.user', 'user')
+      .where('financeAccount.id = :id', {
+        id,
+      })
+      .addSelect(['user.id'])
+      .getOne();
+
+    return {
+      id: financeAccount.id,
+      name: financeAccount.name,
+      date: financeAccount.date,
+      users: financeAccount.finaceAccountUser.map((item) => item.user?.['id']),
+    };
   }
 }
