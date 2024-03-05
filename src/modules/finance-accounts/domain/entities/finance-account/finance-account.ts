@@ -50,6 +50,25 @@ class FinanceAccount implements IFinanceAccount {
     return this._users;
   }
 
+  public addUser(userId: string): void {
+    const userIsAlreadyAdded: boolean = this._users.includes(userId);
+    if (userIsAlreadyAdded) {
+      throw new BadRequestError('this user is already added');
+    }
+
+    const accountHasFiveUsers: boolean = this._users.length >= 5;
+    if (accountHasFiveUsers) {
+      throw new BadRequestError('account should have only five users');
+    }
+
+    const isNotCorrectUUID = !Validator.isUUID(userId);
+    if (isNotCorrectUUID) {
+      throw new BadRequestError('user id in invalid format');
+    }
+
+    this._users.push(userId);
+  }
+
   get date(): string {
     return this._date;
   }
