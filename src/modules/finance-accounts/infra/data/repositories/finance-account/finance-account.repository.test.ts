@@ -1,7 +1,10 @@
 import { FinanceAccountRepository } from '@finance-accounts/infra/data/repositories';
-import { FinanceAccountEntity } from '@finance-accounts/infra/data/entities';
+import {
+  FinanceAccountEntity,
+  FinanceAccountUserEntity,
+} from '@finance-accounts/infra/data/entities';
 import { dataSourceTest } from '@shared/infra/database';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { randomUUID } from 'node:crypto';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import {
@@ -15,6 +18,7 @@ describe('FinanceAccountRepository integration tests', () => {
   let sut: IFinanceAccountRepository;
   let FinanceAccountRepo: Repository<FinanceAccountEntity>;
   let userRepo: Repository<UserEntity>;
+  let financeAccountUserRepo: Repository<FinanceAccountUserEntity>;
   const data: FinanceAccountProps = {
     id: randomUUID(),
     name: 'Name',
@@ -36,6 +40,9 @@ describe('FinanceAccountRepository integration tests', () => {
       sut = FinanceAccountRepository.createInstance(dataSourceTest);
       FinanceAccountRepo = dataSourceTest.getRepository(FinanceAccountEntity);
       userRepo = dataSourceTest.getRepository(UserEntity);
+      financeAccountUserRepo = dataSourceTest.getRepository(
+        FinanceAccountUserEntity,
+      );
     } catch (error) {
       console.log(error);
     }
@@ -66,6 +73,45 @@ describe('FinanceAccountRepository integration tests', () => {
       });
 
       await expect(sut.create(input.toJSON())).resolves.not.toThrow();
+    });
+  });
+
+  describe('addUserInAccount', () => {
+    it(`should add user in FinanceAccount`, async () => {
+      const firstUser = userRepo.create({
+        id: randomUUID(),
+        name: 'Name 1',
+        email: 'email@example.com',
+        password: 'Test@123',
+      });
+      const secondUser = userRepo.create({
+        id: randomUUID(),
+        name: 'Name 2',
+        email: 'emai1l@example.com',
+        password: 'Test@123',
+      });
+      await userRepo.save([firstUser, secondUser]);
+
+      const financeAccount = FinanceAccountFactory.create({
+        ...data,
+        users: [firstUser.id],
+      });
+      await sut.create(financeAccount.toJSON());
+      financeAccount.addUser(secondUser.id);
+
+      await expect(
+        sut.addUserInAccount({
+          ...financeAccount.toJSON(),
+          users: [firstUser.id, secondUser.id],
+        }),
+      ).resolves.not.toThrow();
+
+      const finaceAccountUserList = await financeAccountUserRepo.find({
+        select: ['id'],
+        where: { financeAccount: Equal(financeAccount.toJSON().id) },
+      });
+
+      expect(finaceAccountUserList.length).toStrictEqual(2);
     });
   });
 });
