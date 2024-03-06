@@ -1,8 +1,18 @@
 import { AuthRequest } from '@auth/infra/main/dtos';
 import { FinanceAccountUseCasesFactory } from '@finance-accounts/application/usecases';
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Put,
+} from '@nestjs/common';
 
-import { CreateFinanceAccountDTO } from '@finance-accounts/infra/main/dtos';
+import {
+  AddUserInFinanceAccountDTO,
+  CreateFinanceAccountDTO,
+} from '@finance-accounts/infra/main/dtos';
 import { CurrentUser } from '@shared/infra/decorators';
 
 @Controller('finance-accounts')
@@ -16,5 +26,16 @@ export class FinanceAccountsController {
     const usecase = FinanceAccountUseCasesFactory.createFinanceAccount();
 
     return usecase.execute({ ...body, userId });
+  }
+
+  @Put('add-user')
+  @HttpCode(HttpStatus.OK)
+  public addUser(
+    @Body() body: AddUserInFinanceAccountDTO,
+    @CurrentUser() { id: actionDoneBy }: AuthRequest,
+  ) {
+    const usecase = FinanceAccountUseCasesFactory.addUserInFinanceAccount();
+
+    return usecase.execute({ ...body, actionDoneBy });
   }
 }

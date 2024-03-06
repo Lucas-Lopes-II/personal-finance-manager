@@ -9,6 +9,7 @@
     "build": "nest build",
     "start:prod": "node dist/main",
     "up": "docker compose up -d",
+    "down": "docker compose down",
     "sh": "docker exec -it api-node /bin/sh",
     "format": "prettier --write \"src/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
