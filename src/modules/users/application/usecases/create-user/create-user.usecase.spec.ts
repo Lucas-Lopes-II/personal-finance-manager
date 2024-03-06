@@ -41,7 +41,7 @@ describe('CreateUserUseCase unit tests', () => {
     expect(mockedUserRepo.create).toHaveBeenCalledTimes(1);
   });
 
-  it('should thow a BadRequestError if userReadingRepo.emailExists return true', async () => {
+  it('should throw a BadRequestError if userReadingRepo.emailExists return true', async () => {
     jest.spyOn(mockedUserRepo, 'emailExists').mockResolvedValueOnce(true);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(

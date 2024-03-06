@@ -34,7 +34,7 @@ describe('CreateFinanceAccount.UseCase unit tests', () => {
     expect(mockedFinanceAccountRepo.create).toHaveBeenCalledTimes(1);
   });
 
-  it('should thow a BadRequestError if there is no user with given userId', async () => {
+  it('should throw a BadRequestError if there is no user with given userId', async () => {
     jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(null);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(

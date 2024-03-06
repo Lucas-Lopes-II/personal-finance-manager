@@ -39,7 +39,7 @@ describe('Signin.UseCase unit tests', () => {
     expect(mockedHasher.compare).toHaveBeenCalledTimes(1);
   });
 
-  it('should thow a BadRequestError if there is no user with given email', async () => {
+  it('should throw a BadRequestError if there is no user with given email', async () => {
     jest.spyOn(mockedUserRepo, 'findByEmail').mockResolvedValueOnce(null);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(
@@ -47,7 +47,7 @@ describe('Signin.UseCase unit tests', () => {
     );
   });
 
-  it('should thow a BadRequestError if the password comparation return false', async () => {
+  it('should throw a BadRequestError if the password comparation return false', async () => {
     jest.spyOn(mockedHasher, 'compare').mockResolvedValueOnce(false);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(
