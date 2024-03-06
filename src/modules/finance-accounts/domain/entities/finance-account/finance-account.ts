@@ -22,6 +22,9 @@ export interface IFinanceAccount {
   get name(): string;
   get users(): string[];
   get date(): string;
+  addUser(userId: string): void;
+  checkIfUserIsAlreadyAdded(userId: string): boolean;
+  toJSON(): FinanceAccountProps;
 }
 
 class FinanceAccount implements IFinanceAccount {
@@ -51,7 +54,7 @@ class FinanceAccount implements IFinanceAccount {
   }
 
   public addUser(userId: string): void {
-    const userIsAlreadyAdded: boolean = this._users.includes(userId);
+    const userIsAlreadyAdded: boolean = this.checkIfUserIsAlreadyAdded(userId);
     if (userIsAlreadyAdded) {
       throw new BadRequestError('this user is already added');
     }
@@ -67,6 +70,10 @@ class FinanceAccount implements IFinanceAccount {
     }
 
     this._users.push(userId);
+  }
+
+  public checkIfUserIsAlreadyAdded(userId: string): boolean {
+    return this._users.includes(userId);
   }
 
   get date(): string {
@@ -113,7 +120,7 @@ class FinanceAccount implements IFinanceAccount {
 }
 
 export class FinanceAccountFactory {
-  public static create(props: FinanceAccountProps): FinanceAccount {
+  public static create(props: FinanceAccountProps): IFinanceAccount {
     return new FinanceAccount(props.id, props.name, props.users, props.date);
   }
 }
