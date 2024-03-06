@@ -139,4 +139,22 @@ describe('FinanceAccount unit tests', () => {
       );
     });
   });
+
+  describe('checkIfUserIsAlreadyAdded', () => {
+    it('should check if user is already added correctly', () => {
+      const stubUser = randomUUID();
+      const financeAccount = FinanceAccountFactory.create({
+        ...data,
+        users: [stubUser, randomUUID()],
+      });
+      let result = financeAccount.checkIfUserIsAlreadyAdded(stubUser);
+
+      expect(result).toBeTruthy();
+
+      const otherStubUser = randomUUID();
+      result = financeAccount.checkIfUserIsAlreadyAdded(otherStubUser);
+
+      expect(result).toBeFalsy();
+    });
+  });
 });
