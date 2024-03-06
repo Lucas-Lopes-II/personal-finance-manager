@@ -1,5 +1,5 @@
 import { AuthRequest } from '@auth/infra/main/dtos';
-import { FinanceAccountUseCasesFactory } from '@finance-accounts/application/usecases/finance-account/finance-account.usecases.factory';
+import { FinanceAccountUseCasesFactory } from '@finance-accounts/application/usecases';
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 import { CreateFinanceAccountDTO } from '@finance-accounts/infra/main/dtos';
