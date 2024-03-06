@@ -6,6 +6,7 @@ import {
 } from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { IUserRepository } from '@users/domain/repositories';
+import { Validation } from '@shared/domain/validations';
 
 export namespace AddUserInFinanceAccount {
   export type Input = {
@@ -20,9 +21,11 @@ export namespace AddUserInFinanceAccount {
     constructor(
       private readonly financeAccountRepository: IFinanceAccountRepository,
       private readonly userRepository: IUserRepository,
+      private readonly validator: Validation,
     ) {}
 
     public async execute(input: Input): Promise<Output> {
+      this.validator.validate(input);
       const { accountId, actionDoneBy, userId } = input;
       const newUserToAddExists = await this.userRepository.findById(userId, [
         'id',

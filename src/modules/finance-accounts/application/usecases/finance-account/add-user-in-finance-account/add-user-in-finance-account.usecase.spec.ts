@@ -7,6 +7,7 @@ import {
   FinanceAccountFactory,
   FinanceAccountProps,
 } from '@finance-accounts/domain/entities';
+import { Validation } from '@shared/domain/validations';
 
 describe('AddUserInFinanceAccount.UseCase unit tests', () => {
   const mockedInput: AddUserInFinanceAccount.Input = {
@@ -26,6 +27,7 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
   let sut: AddUserInFinanceAccount.UseCase;
   let mockedFinanceAccountRepo: IFinanceAccountRepository;
   let mockedUserRepo: IUserRepository;
+  let mockedValidator: Validation;
 
   beforeEach(() => {
     mockedFinanceAccountRepo = {
@@ -35,9 +37,13 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
     mockedUserRepo = {
       findById: jest.fn().mockResolvedValue({ id: mockedInput.userId }),
     } as any as IUserRepository;
+    mockedValidator = {
+      validate: jest.fn().mockReturnValue(undefined),
+    } as any as Validation;
     sut = new AddUserInFinanceAccount.UseCase(
       mockedFinanceAccountRepo,
       mockedUserRepo,
+      mockedValidator,
     );
   });
 
@@ -107,6 +113,14 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
       .mockImplementationOnce(() => {
         throw new Error('');
       });
+
+    expect(sut.execute(mockedInput)).rejects.toThrow();
+  });
+
+  it('should throw if validator.addUserInAccount throws', async () => {
+    jest.spyOn(mockedValidator, 'validate').mockImplementationOnce(() => {
+      throw new Error('');
+    });
 
     expect(sut.execute(mockedInput)).rejects.toThrow();
   });
