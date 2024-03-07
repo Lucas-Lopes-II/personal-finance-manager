@@ -1,4 +1,4 @@
-import { AuthRequest } from '@auth/infra/main/dtos';
+import { AuthRequest } from '@auth/infra/dtos';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 export const CurrentUser = createParamDecorator(

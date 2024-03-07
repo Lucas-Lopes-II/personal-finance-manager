@@ -10,7 +10,7 @@ import {
 
 import { IsPublic } from '@shared/infra/decorators';
 import { LocalAuthGuard, OnlyAdminGuard } from '@auth/infra/main/guards';
-import { AuthRequest, CreateUserDTO } from '@auth/infra/main/dtos';
+import { AuthRequest, CreateUserDTO } from '@auth/infra/dtos';
 import { UserUseCasesFactory } from '@users/application/usecases';
 import { AuthUseCasesFactory } from '@auth/application/usecases';
 

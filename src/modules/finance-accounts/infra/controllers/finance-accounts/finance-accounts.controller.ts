@@ -1,4 +1,4 @@
-import { AuthRequest } from '@auth/infra/main/dtos';
+import { AuthRequest } from '@auth/infra/dtos';
 import { FinanceAccountUseCasesFactory } from '@finance-accounts/application/usecases';
 import {
   Body,
@@ -12,7 +12,7 @@ import {
 import {
   AddUserInFinanceAccountDTO,
   CreateFinanceAccountDTO,
-} from '@finance-accounts/infra/main/dtos';
+} from '@finance-accounts/infra/controllers/dtos';
 import { CurrentUser } from '@shared/infra/decorators';
 
 @Controller('finance-accounts')

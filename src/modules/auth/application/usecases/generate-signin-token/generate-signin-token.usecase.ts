@@ -1,4 +1,4 @@
-import { requestUser } from '@auth/infra/main/dtos';
+import { requestUser } from '@auth/infra/dtos';
 import { DefaultUseCase } from '@shared/domain/usecases';
 import { IJsonWebToken } from '@shared/infra/jwt';
 
