@@ -6,7 +6,7 @@ export default {
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: '<rootDir>/',
   }),
-  testRegex: ['.*\\..*spec\\.ts$', '.*\\..*test\\.ts$'],
+  testRegex: ['.*\\..*spec\\.ts$', '.*\\..*test\\.ts$', '.*\\..*e2e\\.ts$'],
   transform: {
     '^.+\\.(t|j)s$': 'ts-jest',
   },
@@ -38,5 +38,6 @@ export default {
     '.decorator.ts',
     '-error.ts',
     '.+/infra/main/.*\\.controller\\.ts$',
+    '.+/infra/controllers/.*\\.controller\\.ts$',
   ],
 };

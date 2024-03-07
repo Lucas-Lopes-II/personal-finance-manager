@@ -1,4 +1,4 @@
-import { dataSourceTest } from '@shared/infra/database';
+import { dataSource } from '@shared/infra/database';
 import { UserRepository } from './user.repository';
 import { IUserRepository } from '@users/domain/repositories';
 import { Repository } from 'typeorm';
@@ -20,9 +20,9 @@ describe('UserRepository integration tests', () => {
 
   beforeAll(async () => {
     try {
-      await dataSourceTest.initialize();
-      sut = UserRepository.createInstance(dataSourceTest);
-      userRepo = dataSourceTest.getRepository(UserEntity);
+      await dataSource.initialize();
+      sut = UserRepository.createInstance(dataSource);
+      userRepo = dataSource.getRepository(UserEntity);
     } catch (error) {
       console.log(error);
     }
@@ -33,7 +33,7 @@ describe('UserRepository integration tests', () => {
   });
 
   afterAll(async () => {
-    await dataSourceTest.destroy();
+    await dataSource.destroy();
   });
 
   it(`the sut and userRepo should be defined`, () => {

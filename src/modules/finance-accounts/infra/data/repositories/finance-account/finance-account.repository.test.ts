@@ -3,7 +3,7 @@ import {
   FinanceAccountEntity,
   FinanceAccountUserEntity,
 } from '@finance-accounts/infra/data/entities';
-import { dataSourceTest } from '@shared/infra/database';
+import { dataSource } from '@shared/infra/database';
 import { Equal, Repository } from 'typeorm';
 import { randomUUID } from 'node:crypto';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
@@ -36,11 +36,11 @@ describe('FinanceAccountRepository integration tests', () => {
 
   beforeAll(async () => {
     try {
-      await dataSourceTest.initialize();
-      sut = FinanceAccountRepository.createInstance(dataSourceTest);
-      FinanceAccountRepo = dataSourceTest.getRepository(FinanceAccountEntity);
-      userRepo = dataSourceTest.getRepository(UserEntity);
-      financeAccountUserRepo = dataSourceTest.getRepository(
+      await dataSource.initialize();
+      sut = FinanceAccountRepository.createInstance(dataSource);
+      FinanceAccountRepo = dataSource.getRepository(FinanceAccountEntity);
+      userRepo = dataSource.getRepository(UserEntity);
+      financeAccountUserRepo = dataSource.getRepository(
         FinanceAccountUserEntity,
       );
     } catch (error) {
@@ -53,7 +53,7 @@ describe('FinanceAccountRepository integration tests', () => {
   });
 
   afterAll(async () => {
-    await dataSourceTest.destroy();
+    await dataSource.destroy();
   });
 
   it(`the sut, FinanceAccountRepo and userRepo should be defined`, () => {
