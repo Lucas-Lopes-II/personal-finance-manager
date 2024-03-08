@@ -151,4 +151,34 @@ describe('FinanceAccountRepository integration tests', () => {
       });
     });
   });
+
+  describe('findByUserId', () => {
+    beforeEach(async () => {
+      const createdUser = userRepo.create(userInput);
+      await userRepo.save(createdUser);
+
+      const input = FinanceAccountFactory.create({
+        ...data,
+        users: [userData.id],
+      });
+      await sut.create({ ...input.toJSON(), id: randomUUID() });
+      await sut.create({ ...input.toJSON(), id: randomUUID() });
+      await sut.create({ ...input.toJSON(), id: randomUUID() });
+    });
+
+    it('should return financeAccounts of user', async () => {
+      const result = await sut.findByUserId(userData.id);
+
+      expect(result.length).toStrictEqual(3);
+    });
+
+    it('should return of financeAccounts of user with selected fields', async () => {
+      const result = await sut.findByUserId(userData.id, ['id']);
+
+      expect(result.length).toStrictEqual(3);
+      expect(result[0].id).toBeDefined();
+      expect(result[0].name).toBeUndefined();
+      expect(result[0].date).toBeUndefined();
+    });
+  });
 });
