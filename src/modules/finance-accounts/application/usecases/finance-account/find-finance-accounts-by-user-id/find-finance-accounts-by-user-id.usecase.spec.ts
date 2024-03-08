@@ -9,7 +9,7 @@ describe('FindFinanceAccountsByUserId.UseCase unit tests', () => {
     userId: randomUUID(),
     selectedFields: [],
   };
-  const mockedOutut = [
+  const mockedOutut: FindFinanceAccountsByUserId.Output = [
     {
       id: randomUUID(),
       name: 'Name 1',
