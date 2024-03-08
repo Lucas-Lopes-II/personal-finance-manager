@@ -1,17 +1,18 @@
-import { DefaultUseCase } from '@shared/domain/usecases';
-import {
-  CreateFinanceAccount,
-  AddUserInFinanceAccount,
-} from '@finance-accounts/application/usecases';
-import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
-import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
-import { IUserRepository } from '@users/domain/repositories';
-import { userRepositoryFactory } from '@users/infra/data/repositories';
 import {
   UUIDValidation,
   Validation,
   ValidationComposite,
 } from '@shared/domain/validations';
+import { DefaultUseCase } from '@shared/domain/usecases';
+import {
+  CreateFinanceAccount,
+  AddUserInFinanceAccount,
+  FindFinanceAccountsByUserId,
+} from '@finance-accounts/application/usecases';
+import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
+import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
+import { IUserRepository } from '@users/domain/repositories';
+import { userRepositoryFactory } from '@users/infra/data/repositories';
 
 export class FinanceAccountUseCasesFactory {
   private static readonly financeAccountRepository: IFinanceAccountRepository =
@@ -38,6 +39,13 @@ export class FinanceAccountUseCasesFactory {
       this.financeAccountRepository,
       this.userRepository,
       validator,
+    );
+  }
+
+  public static findFinanceAccountsByUserId(): DefaultUseCase {
+    return new FindFinanceAccountsByUserId.UseCase(
+      this.financeAccountRepository,
+      this.userRepository,
     );
   }
 }
