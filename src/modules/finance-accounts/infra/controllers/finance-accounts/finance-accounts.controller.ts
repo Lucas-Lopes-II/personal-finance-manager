@@ -1,12 +1,15 @@
+import { FinanceAccountProps } from '@finance-accounts/domain/entities';
 import { AuthRequest } from '@auth/infra/dtos';
 import { FinanceAccountUseCasesFactory } from '@finance-accounts/application/usecases';
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 
 import {
@@ -14,6 +17,7 @@ import {
   CreateFinanceAccountDTO,
 } from '@finance-accounts/infra/controllers/dtos';
 import { CurrentUser } from '@shared/infra/decorators';
+import { SelectFields, hydratesSelectFields } from '@shared/infra/dtos';
 
 @Controller('finance-accounts')
 export class FinanceAccountsController {
@@ -37,5 +41,20 @@ export class FinanceAccountsController {
     const usecase = FinanceAccountUseCasesFactory.addUserInFinanceAccount();
 
     return usecase.execute({ ...body, actionDoneBy });
+  }
+
+  @Get('')
+  @HttpCode(HttpStatus.OK)
+  public findByUserId(
+    @Query() { selectFields }: SelectFields,
+    @CurrentUser() { id: userId }: AuthRequest,
+  ) {
+    const usecase = FinanceAccountUseCasesFactory.findFinanceAccountsByUserId();
+
+    return usecase.execute({
+      selectedFields:
+        hydratesSelectFields<keyof FinanceAccountProps>(selectFields),
+      userId,
+    });
   }
 }
