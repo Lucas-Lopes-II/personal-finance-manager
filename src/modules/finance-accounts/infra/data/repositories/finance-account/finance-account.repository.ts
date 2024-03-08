@@ -113,4 +113,37 @@ export class FinanceAccountRepository
       users: financeAccount.finaceAccountUser.map((item) => item.user?.['id']),
     };
   }
+
+  public async findByUserId(
+    userId: string,
+    fields: (keyof FinanceAccountProps)[] = [],
+  ): Promise<FinanceAccountProps[] | Partial<FinanceAccountProps>[]> {
+    const select = this.createQueryBuilderSelectByFields(
+      'financeAccount',
+      fields,
+    );
+
+    // const financeAccounts = await this.financeAccountRepo.find();
+    const financeAccounts = await this.financeAccountRepo
+      .createQueryBuilder('financeAccount')
+      .select(select)
+      .innerJoinAndSelect(
+        'financeAccount.finaceAccountUser',
+        'finaceAccountUser',
+      )
+      .innerJoinAndSelect('finaceAccountUser.user', 'user')
+      .where('user.id = :userId', {
+        userId,
+      })
+      .addSelect(['finaceAccountUser.user'])
+      .addSelect(['user.id'])
+      .getMany();
+
+    return financeAccounts.map((financeAccount) => ({
+      id: financeAccount.id,
+      name: financeAccount.name,
+      date: financeAccount.date,
+      users: financeAccount.finaceAccountUser.map((item) => item.user?.['id']),
+    }));
+  }
 }
