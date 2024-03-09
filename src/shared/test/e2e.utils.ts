@@ -6,9 +6,9 @@ export class E2EUtilities {
     name: string;
     email: string;
     password: string;
-  }): Promise<void> {
+  }): Promise<any> {
     const useCase = UserUseCasesFactory.createUser();
-    await useCase.execute(body);
+    return useCase.execute(body);
   }
 
   public static async executeLoginAndReturnToken(
