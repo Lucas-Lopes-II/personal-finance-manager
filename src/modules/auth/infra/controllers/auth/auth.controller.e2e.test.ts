@@ -168,6 +168,59 @@ describe('AuthController E2E tests', () => {
     });
   });
 
+  describe('login', () => {
+    it('should sign-in an user', async () => {
+      const response = await request(server).post('/auth/login').send({
+        email: 'test@test.com',
+        password: 'Test@123',
+      });
+
+      expect(response.status).toStrictEqual(200);
+      expect(response.body.access_token).toBeDefined();
+    });
+
+    it('should throw Bad request error', async () => {
+      let response = await request(server)
+        .post('/auth/login')
+
+        .send({
+          email: 'testtest',
+          password: 'Test@123',
+        });
+      expect(response.status).toStrictEqual(400);
+
+      response = await request(server)
+        .post('/auth/login')
+
+        .send({
+          email: 1,
+          password: 'Test@123',
+        });
+      expect(response.status).toStrictEqual(400);
+
+      response = await request(server)
+        .post('/auth/login')
+
+        .send({
+          email: 'te',
+          password: 'Test@123',
+        });
+      expect(response.status).toStrictEqual(400);
+
+      response = await request(server).post('/auth/login').send({
+        email: 'test@test.com',
+        password: 'Test123',
+      });
+      expect(response.status).toStrictEqual(400);
+
+      response = await request(server).post('/auth/login').send({
+        email: 'test@test.com',
+        password: 'T',
+      });
+      expect(response.status).toStrictEqual(400);
+    });
+  });
+
   describe('becomeAdminUser', () => {
     let user: UserProps;
 
