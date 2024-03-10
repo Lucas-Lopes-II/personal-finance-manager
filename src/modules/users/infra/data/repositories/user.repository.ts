@@ -69,4 +69,11 @@ export class UserRepository
       where: { id: id },
     });
   }
+
+  public async update(id: string, data: Partial<UserProps>): Promise<IUser> {
+    const updateEntity = await this.userRepo.preload({ ...data, id });
+    await this.userRepo.save(updateEntity);
+
+    return UserFactory.create(updateEntity);
+  }
 }
