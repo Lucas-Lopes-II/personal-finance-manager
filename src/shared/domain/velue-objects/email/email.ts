@@ -3,26 +3,26 @@ import { Validator } from '../../validations';
 
 export class Email {
   constructor(private readonly email: string) {
+    this.validation(email);
     this.email = email.toLowerCase();
-    this.validation();
   }
 
   get value(): string {
     return this.email;
   }
 
-  private validation(): void {
-    const isValid = Validator.isEmail(this.email);
+  private validation(email: string): void {
+    const isValid = Validator.isEmail(email);
 
     if (!isValid) {
       throw new BadRequestError('email in invalid format');
     }
 
-    if (this.email.length < 8) {
+    if (email.length < 8) {
       throw new BadRequestError('email must contain at least 8 characters');
     }
 
-    if (this.email.length > 100) {
+    if (email.length > 100) {
       throw new BadRequestError(
         'email must contain a maximum of 100 characters',
       );
