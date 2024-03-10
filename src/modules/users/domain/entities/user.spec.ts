@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { UserFactory } from '@users/domain/entities';
-import { BadRequestError } from '@shared/domain/errors';
+import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 
 describe('User unit tests', () => {
   const id = randomUUID();
@@ -92,6 +92,39 @@ describe('User unit tests', () => {
         }),
       ).toThrow(
         new BadRequestError('password must contain at least 6 characters'),
+      );
+    });
+  });
+
+  describe('becomeAdmin', () => {
+    it('should become admin correctly', () => {
+      const adminUser = UserFactory.create({
+        ...data,
+        isAdmin: true,
+        password: 'inicial password',
+      });
+      const user = UserFactory.create({
+        ...data,
+        password: 'inicial password',
+      });
+
+      user.becomeAdmin(adminUser);
+      expect(user.isAdmin).toBeTruthy();
+    });
+
+    it('should throw ForbiddenError if action is done by no admin user', () => {
+      const adminUser = UserFactory.create({
+        ...data,
+        isAdmin: false,
+        password: 'inicial password',
+      });
+      const user = UserFactory.create({
+        ...data,
+        password: 'inicial password',
+      });
+
+      expect(() => user.becomeAdmin(adminUser)).toThrow(
+        new ForbiddenError('Action not allowed'),
       );
     });
   });
