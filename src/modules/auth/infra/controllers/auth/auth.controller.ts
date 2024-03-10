@@ -4,13 +4,18 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
 
-import { IsPublic } from '@shared/infra/decorators';
+import { CurrentUser, IsPublic } from '@shared/infra/decorators';
 import { LocalAuthGuard, OnlyAdminGuard } from '@auth/infra/main/guards';
-import { AuthRequest, CreateUserDTO } from '@auth/infra/dtos';
+import {
+  AuthRequest,
+  BecomeAdminUserDTO,
+  CreateUserDTO,
+} from '@auth/infra/dtos';
 import { UserUseCasesFactory } from '@users/application/usecases';
 import { AuthUseCasesFactory } from '@auth/application/usecases';
 
@@ -33,5 +38,17 @@ export class AuthController {
     const usecase = AuthUseCasesFactory.generateSigninToken();
 
     return usecase.execute(req.user);
+  }
+
+  @Put('become-admin-user')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(OnlyAdminGuard)
+  public becomeAdminUser(
+    @Body() { userId }: BecomeAdminUserDTO,
+    @CurrentUser() { id: actionDoneBy }: AuthRequest,
+  ) {
+    const usecase = AuthUseCasesFactory.becomeAdminUser();
+
+    return usecase.execute({ userId, actionDoneBy });
   }
 }

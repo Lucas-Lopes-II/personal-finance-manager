@@ -1,10 +1,14 @@
-import { AppModule } from './../../../../../app.module';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import request from 'supertest';
+import { randomUUID } from 'node:crypto';
+import { AppModule } from './../../../../../app.module';
+import { userRepositoryFactory } from '@users/infra/data/repositories';
+import { UserProps } from '@users/domain/entities';
+import { E2EUtilities } from '@shared/test';
 import { dataSource } from '@shared/infra/database';
 import { globalExeptionFiltersFactory } from '@shared/infra/exception-filters';
-import { E2EUtilities } from '@shared/test';
 
 describe('AuthController E2E tests', () => {
   let app: INestApplication;
@@ -157,6 +161,64 @@ describe('AuthController E2E tests', () => {
           name: 'Neme 3',
           email: 'tes3t@test.com',
           password: 1,
+        });
+
+      expect(response.status).toStrictEqual(400);
+      expect(response.body.error).toStrictEqual('Bad Request');
+    });
+  });
+
+  describe('becomeAdminUser', () => {
+    let user: UserProps;
+
+    beforeAll(async () => {
+      const repo = userRepositoryFactory();
+      user = (await repo.findByEmail('test@test.com')) as UserProps;
+    });
+
+    it('should become admin user', async () => {
+      const response = await request(server)
+        .put('/auth/become-admin-user')
+        .set('Authorization', `Bearer ${adminAuthToken}`)
+        .send({
+          userId: user.id,
+        });
+
+      expect(response.status).toStrictEqual(200);
+      expect(response.body.name).toStrictEqual(user.name);
+      expect(response.body.email).toStrictEqual(user.email);
+      expect(response.body.id).toStrictEqual(user.id);
+    });
+
+    it('should throw Forbidden error if action done by no admin user', async () => {
+      const response = await request(server)
+        .put('/auth/become-admin-user')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          userId: user.id,
+        });
+
+      expect(response.status).toStrictEqual(403);
+      expect(response.body.message).toStrictEqual('Access denied');
+    });
+
+    it('should throw Unauthorized error if there is no auth token', async () => {
+      const response = await request(server)
+        .put('/auth/become-admin-user')
+        .send({
+          userId: user.id,
+        });
+
+      expect(response.status).toStrictEqual(401);
+      expect(response.body.message).toStrictEqual('Unauthorized');
+    });
+
+    it('should throw Bad request error', async () => {
+      const response = await request(server)
+        .put('/auth/become-admin-user')
+        .set('Authorization', `Bearer ${adminAuthToken}`)
+        .send({
+          userId: randomUUID(),
         });
 
       expect(response.status).toStrictEqual(400);
