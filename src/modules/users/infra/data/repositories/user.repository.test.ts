@@ -113,4 +113,23 @@ describe('UserRepository integration tests', () => {
       expect(result.password).toBeUndefined();
     });
   });
+
+  describe('update', () => {
+    it(`should create an user`, async () => {
+      await sut.create(input);
+
+      const result = await sut.update(input.id, {
+        name: 'Name 1',
+        email: 'email1@example.com',
+        isAdmin: true,
+        password: 'Test1@123',
+      });
+
+      expect(result.id).toStrictEqual(id);
+      expect(result.name).toStrictEqual('Name 1');
+      expect(result.email).toStrictEqual('email1@example.com');
+      expect(result.isAdmin).toStrictEqual(true);
+      expect(result.password).toStrictEqual('Test1@123');
+    });
+  });
 });
