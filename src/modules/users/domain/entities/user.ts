@@ -7,6 +7,7 @@ import {
   Validation,
   ValidationComposite,
 } from '@shared/domain/validations';
+import { ForbiddenError } from '@shared/domain/errors';
 
 export type UserProps = {
   id?: string;
@@ -24,6 +25,7 @@ export interface IUser {
   get isAdmin(): boolean;
   toJSON(): UserProps;
   changePassword(email: string): void;
+  becomeAdmin(actionDoneBy: IUser): void;
 }
 
 class User implements IUser {
@@ -63,6 +65,15 @@ class User implements IUser {
   get isAdmin(): boolean {
     return this._isAdmin;
   }
+
+  public becomeAdmin(actionDoneBy: IUser): void {
+    if (!actionDoneBy.isAdmin) {
+      throw new ForbiddenError('Action not allowed');
+    }
+
+    this._isAdmin = true;
+  }
+
   get password(): string {
     return this._password;
   }
