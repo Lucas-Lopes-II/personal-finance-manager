@@ -48,16 +48,22 @@ describe('MothlyEntryReport unit tests', () => {
     });
 
     it('should throw a BadRequestError if month is in incorrect value', () => {
-      let testData = { ...data, month: -1 };
+      let testData = { ...data, month: 0 };
 
       expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
-        new BadRequestError('month must be at least 1'),
+        new BadRequestError('month is required'),
+      );
+
+      testData = { ...data, month: -1 };
+
+      expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
+        new BadRequestError('month should be type enum Month'),
       );
 
       testData = { ...data, month: 13 };
 
       expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
-        new BadRequestError('month must be at most 12'),
+        new BadRequestError('month should be type enum Month'),
       );
     });
   });

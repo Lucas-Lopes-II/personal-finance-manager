@@ -1,10 +1,9 @@
 import { Month } from '@shared/domain/enums';
 import {
-  MaxValueFieldValidation,
-  MinValueFieldValidation,
   UUIDValidation,
   Validation,
   ValidationComposite,
+  EnumValidation,
 } from '@shared/domain/validations';
 import { randomUUID } from 'node:crypto';
 
@@ -76,8 +75,7 @@ class MothlyEntryReport implements IMothlyEntryReport {
     const validations: Validation<MothlyEntryReportProps>[] = [
       new UUIDValidation('id'),
 
-      new MinValueFieldValidation('month', 1),
-      new MaxValueFieldValidation('month', 12),
+      new EnumValidation('month', Month, 'Month'),
 
       new UUIDValidation('account'),
     ];
