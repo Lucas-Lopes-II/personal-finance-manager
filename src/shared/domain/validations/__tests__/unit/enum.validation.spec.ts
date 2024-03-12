@@ -25,7 +25,7 @@ describe('EnumValidation unit tests', () => {
   });
 
   it('should not throw a BadRequestError when the given month is not provided and isRequired flag is false', async () => {
-    sut = new EnumValidation('month', Month, 'Month', false);
+    sut = new EnumValidation('month', Month, null, false);
     dataValidate.month = null;
 
     expect(() => sut.validate(dataValidate)).not.toThrow();
@@ -36,6 +36,11 @@ describe('EnumValidation unit tests', () => {
 
     expect(() => sut.validate(dataValidate)).toThrow(
       new BadRequestError(`month should be type enum Month`),
+    );
+
+    sut = new EnumValidation('month', Month, null);
+    expect(() => sut.validate(dataValidate)).toThrow(
+      new BadRequestError(`month should be type enum`),
     );
   });
 });
