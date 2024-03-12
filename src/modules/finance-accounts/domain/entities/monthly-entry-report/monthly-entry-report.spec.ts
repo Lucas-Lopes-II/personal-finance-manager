@@ -40,7 +40,7 @@ describe('MothlyEntryReport unit tests', () => {
     });
 
     it('should throw a BadRequestError if account is invalid', () => {
-      const testData = { ...data, account: 'dfcdcfd' };
+      const testData = { ...data, id: null, account: 'dfcdcfd' };
 
       expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
         new BadRequestError('account in invalid format'),

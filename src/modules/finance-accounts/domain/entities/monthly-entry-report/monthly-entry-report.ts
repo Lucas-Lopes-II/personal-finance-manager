@@ -1,3 +1,11 @@
+import { Month } from '@shared/domain/enums';
+import {
+  MaxValueFieldValidation,
+  MinValueFieldValidation,
+  UUIDValidation,
+  Validation,
+  ValidationComposite,
+} from '@shared/domain/validations';
 import { randomUUID } from 'node:crypto';
 
 export type Summary = Array<{
@@ -7,14 +15,14 @@ export type Summary = Array<{
 
 export type MothlyEntryReportProps = {
   id: string;
-  month: string;
+  month: Month;
   account: string;
   summary?: Summary;
 };
 
 export interface IMothlyEntryReport {
   get id(): string;
-  get month(): string;
+  get month(): Month;
   get account(): string;
   get summary(): Summary;
   toJSON(): MothlyEntryReportProps;
@@ -22,22 +30,23 @@ export interface IMothlyEntryReport {
 
 class MothlyEntryReport implements IMothlyEntryReport {
   private _id: string;
-  private _month: string;
+  private _month: Month;
   private _account: string;
   private _summary: Summary;
 
-  constructor(id: string, month: string, account: string, summary: Summary) {
+  constructor(id: string, month: Month, account: string, summary: Summary) {
     this._id = id || randomUUID();
     this._month = month;
     this._account = account;
     this._summary = summary;
+    this.validation();
   }
 
   get id(): string {
     return this._id;
   }
 
-  get month(): string {
+  get month(): Month {
     return this._month;
   }
 
@@ -56,6 +65,24 @@ class MothlyEntryReport implements IMothlyEntryReport {
       account: this._account,
       summary: this._summary,
     };
+  }
+
+  private validation(): void {
+    const validator = this.createValidator();
+    validator.validate(this.toJSON());
+  }
+
+  private createValidator(): Validation {
+    const validations: Validation<MothlyEntryReportProps>[] = [
+      new UUIDValidation('id'),
+
+      new MinValueFieldValidation('month', 1),
+      new MaxValueFieldValidation('month', 12),
+
+      new UUIDValidation('account'),
+    ];
+
+    return new ValidationComposite(validations);
   }
 }
 
