@@ -150,6 +150,12 @@ describe('FinanceAccountRepository integration tests', () => {
         users: [userInput.id],
       });
     });
+
+    it(`should return undefined if do not find a FinanceAccount`, async () => {
+      const result = await sut.findById('any ID');
+
+      expect(result).toBeUndefined();
+    });
   });
 
   describe('findByUserId', () => {

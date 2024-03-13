@@ -106,6 +106,8 @@ export class FinanceAccountRepository
       .addSelect(['user.id'])
       .getOne();
 
+    if (!financeAccount) return;
+
     return {
       id: financeAccount.id,
       name: financeAccount.name,
