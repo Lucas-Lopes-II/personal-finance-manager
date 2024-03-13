@@ -5,9 +5,10 @@ import { AuthModule } from '@auth/infra/main';
 import { UsersModule } from '@users/infra/main';
 import { JwtAuthGuard } from '@auth/infra/main/guards';
 import { FinanceAccountsModule } from '@finance-accounts/infra/main';
+import { EntriesModule } from '@entries/infra/main';
 
 @Module({
-  imports: [UsersModule, AuthModule, FinanceAccountsModule],
+  imports: [UsersModule, AuthModule, FinanceAccountsModule, EntriesModule],
   providers: [
     {
       provide: APP_GUARD,

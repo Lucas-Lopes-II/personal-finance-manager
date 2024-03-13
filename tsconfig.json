@@ -16,7 +16,8 @@
      "@shared/*": ["src/shared/*"],
      "@users/*": ["src/modules/users/*"],
      "@auth/*": ["src/modules/auth/*"],
-     "@finance-accounts/*": ["src/modules/finance-accounts/*"]
+     "@finance-accounts/*": ["src/modules/finance-accounts/*"],
+     "@entries/*": ["src/modules/entries/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
