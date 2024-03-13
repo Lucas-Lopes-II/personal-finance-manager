@@ -10,5 +10,7 @@ export interface FindByIdOutput {
 }
 
 export interface IFinanceAccountFacade {
-  findById(input: FindByIdInput): Promise<FindByIdOutput>;
+  findById(
+    input: FindByIdInput,
+  ): Promise<FindByIdOutput | Partial<FindByIdOutput>>;
 }
