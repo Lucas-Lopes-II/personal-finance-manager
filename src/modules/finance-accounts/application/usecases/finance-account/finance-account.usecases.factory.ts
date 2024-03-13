@@ -31,10 +31,7 @@ export class FinanceAccountUseCasesFactory {
     );
   }
 
-  public static addUserInFinanceAccount(): DefaultUseCase<
-    AddUserInFinanceAccount.Input,
-    AddUserInFinanceAccount.Output
-  > {
+  public static addUserInFinanceAccount(): AddUserInFinanceAccount.UseCase {
     const validations: Validation<AddUserInFinanceAccount.Input>[] = [
       new UUIDValidation('accountId'),
       new UUIDValidation('actionDoneBy'),
@@ -49,20 +46,14 @@ export class FinanceAccountUseCasesFactory {
     );
   }
 
-  public static findFinanceAccountsByUserId(): DefaultUseCase<
-    FindFinanceAccountsByUserId.Input,
-    FindFinanceAccountsByUserId.Output
-  > {
+  public static findFinanceAccountsByUserId(): FindFinanceAccountsByUserId.UseCase {
     return new FindFinanceAccountsByUserId.UseCase(
       this.financeAccountRepository,
       this.userRepository,
     );
   }
 
-  public static findFinanceAccountById(): DefaultUseCase<
-    FindFinanceAccountById.Input,
-    FindFinanceAccountById.Output
-  > {
+  public static findFinanceAccountById(): FindFinanceAccountById.UseCase {
     return new FindFinanceAccountById.UseCase(this.financeAccountRepository);
   }
 }

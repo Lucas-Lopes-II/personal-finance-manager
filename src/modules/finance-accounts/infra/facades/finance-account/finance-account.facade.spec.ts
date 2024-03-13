@@ -1,16 +1,16 @@
+import { FindFinanceAccountById } from '@finance-accounts/application/usecases';
 import {
   FinanceAccountFacade,
   FinanceAccountFacadeDeps,
   FindByIdOutput,
   IFinanceAccountFacade,
 } from '@finance-accounts/infra/facades';
-import { DefaultUseCase } from '@shared/domain/usecases';
 import { randomUUID } from 'node:crypto';
 
 describe('FinanceAccountFacade unit tests', () => {
   let sut: IFinanceAccountFacade;
   let deps: FinanceAccountFacadeDeps;
-  let findByIdUsecase: DefaultUseCase;
+  let findByIdUsecase: FindFinanceAccountById.UseCase;
   const output: FindByIdOutput = {
     id: randomUUID(),
     name: 'name',
@@ -21,7 +21,7 @@ describe('FinanceAccountFacade unit tests', () => {
   beforeEach(() => {
     findByIdUsecase = {
       execute: jest.fn().mockResolvedValue(output),
-    } as any as DefaultUseCase;
+    } as any as FindFinanceAccountById.UseCase;
     deps = {
       findByIdUsecase,
     };
