@@ -4,9 +4,13 @@ import {
   IFinanceAccountFacade,
 } from '@finance-accounts/infra/facades';
 import { FindFinanceAccountById } from '@finance-accounts/application/usecases';
+import { DefaultUseCase } from '@shared/domain/usecases';
 
 export type FinanceAccountFacadeDeps = {
-  findByIdUsecase: FindFinanceAccountById.UseCase;
+  findByIdUsecase: DefaultUseCase<
+    FindFinanceAccountById.Input,
+    FindFinanceAccountById.Output
+  >;
 };
 
 export class FinanceAccountFacade implements IFinanceAccountFacade {
