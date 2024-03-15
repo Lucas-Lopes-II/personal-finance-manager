@@ -13,7 +13,7 @@ export type Summary = Array<{
 }>;
 
 export type MothlyEntryReportProps = {
-  id: string;
+  id?: string;
   month: Month;
   account: string;
   summary?: Summary;
