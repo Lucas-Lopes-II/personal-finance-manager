@@ -11,6 +11,7 @@ describe('MothlyEntryReport unit tests', () => {
     id: randomUUID(),
     account: randomUUID(),
     month: Month.JANUARY,
+    year: 2023,
     summary: [],
   };
 
@@ -22,10 +23,12 @@ describe('MothlyEntryReport unit tests', () => {
     expect(mothlyEntryReport.month).toStrictEqual(Month.JANUARY);
     expect(mothlyEntryReport.summary).toStrictEqual([]);
     expect(mothlyEntryReport.account).toStrictEqual(data.account);
+    expect(mothlyEntryReport.year).toStrictEqual(data.year);
     expect(result).toStrictEqual({
       id: data.id,
       account: data.account,
       month: data.month,
+      year: data.year,
       summary: data.summary,
     });
   });
@@ -64,6 +67,32 @@ describe('MothlyEntryReport unit tests', () => {
 
       expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
         new BadRequestError('month should be type enum Month'),
+      );
+    });
+
+    it('should throw a BadRequestError if year is invalid', () => {
+      let testData = { ...data, year: null };
+
+      expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
+        new BadRequestError('year is required'),
+      );
+
+      testData = { ...data, year: '1999' };
+
+      expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
+        new BadRequestError('year must be a number'),
+      );
+
+      testData = { ...data, year: 1980 };
+
+      expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
+        new BadRequestError('year must be at least 1990'),
+      );
+
+      testData = { ...data, year: 3001 };
+
+      expect(() => MothlyEntryReportFactory.create(testData)).toThrow(
+        new BadRequestError('year must be at most 3000'),
       );
     });
   });

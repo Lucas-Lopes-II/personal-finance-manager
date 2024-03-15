@@ -8,6 +8,7 @@ import { MothlyEntryReportFactory } from '@entries/domain/entities';
 export namespace CreateMothlyEntryReport {
   export type Input = {
     month: Month;
+    year: number;
     accountId: string;
   };
 
@@ -19,7 +20,7 @@ export namespace CreateMothlyEntryReport {
       private readonly financeAccountFacade: IFinanceAccountFacade,
     ) {}
 
-    public async execute({ accountId, month }: Input): Promise<Output> {
+    public async execute({ accountId, month, year }: Input): Promise<Output> {
       const account = await this.financeAccountFacade.findById({
         id: accountId,
         selectedfields: ['id'],
@@ -31,6 +32,7 @@ export namespace CreateMothlyEntryReport {
       const mothlyEntryReport = MothlyEntryReportFactory.create({
         account: accountId,
         month,
+        year,
       });
       await this.mothlyEntryReportRepo.create(mothlyEntryReport.toJSON());
     }

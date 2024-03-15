@@ -8,6 +8,7 @@ import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 describe('CreateMothlyEntryReport.UseCase unit tests', () => {
   const mockedInput: CreateMothlyEntryReport.Input = {
     month: Month.JANUARY,
+    year: 2023,
     accountId: randomUUID(),
   };
 
