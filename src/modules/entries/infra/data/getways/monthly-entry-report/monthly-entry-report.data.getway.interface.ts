@@ -1,7 +1,7 @@
 import { Month } from '@shared/domain/enums';
-import { MothlyEntryReportProps } from '@entries/domain/entities';
+import { MonthlyEntryReportProps } from '@entries/domain/entities';
 
-export interface IMothlyEntryReportDataGetway<T = MothlyEntryReportProps> {
+export interface IMothlyEntryReportDataGetway<T = MonthlyEntryReportProps> {
   findByYearMonthAndAccount(
     year: number,
     month: Month,

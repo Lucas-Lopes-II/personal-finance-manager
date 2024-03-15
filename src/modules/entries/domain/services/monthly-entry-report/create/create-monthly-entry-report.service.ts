@@ -1,6 +1,6 @@
 import {
-  IMothlyEntryReport,
-  MothlyEntryReportFactory,
+  IMonthlyEntryReport,
+  MonthlyEntryReportFactory,
 } from '@entries/domain/entities';
 import { IMothlyEntryReportRepository } from '@entries/domain/repository';
 import { IMothlyEntryReportDataGetway } from '@entries/infra/data/getways';
@@ -23,7 +23,7 @@ export class CreateMothlyEntryReportService {
 
   public async create(
     data: CreateMothlyEntryReportDto,
-  ): Promise<IMothlyEntryReport> {
+  ): Promise<IMonthlyEntryReport> {
     const account = await this.financeAccountFacade.findById({
       id: data.accountId,
       selectedfields: ['id'],
@@ -45,7 +45,7 @@ export class CreateMothlyEntryReportService {
       );
     }
 
-    const mothlyEntryReport = MothlyEntryReportFactory.create({
+    const mothlyEntryReport = MonthlyEntryReportFactory.create({
       account: data.accountId,
       month: data.month,
       year: data.year,

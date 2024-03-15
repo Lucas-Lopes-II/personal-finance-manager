@@ -1,12 +1,12 @@
 import { Column, Entity, Index } from 'typeorm';
 import { Month } from '@shared/domain/enums';
 import { EntityTypeOrm } from '@shared/infra/database/entities';
-import { MothlyEntryReportProps, Summary } from '@entries/domain/entities';
+import { MonthlyEntryReportProps, Summary } from '@entries/domain/entities';
 
 @Entity('mothly-entry-reports')
 export class MonthlyEntryReportEntity
   extends EntityTypeOrm
-  implements MothlyEntryReportProps
+  implements MonthlyEntryReportProps
 {
   @Column({ nullable: false })
   month: Month;

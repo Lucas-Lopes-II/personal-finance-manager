@@ -14,7 +14,7 @@ export type Summary = Array<{
   total: string;
 }>;
 
-export type MothlyEntryReportProps = {
+export type MonthlyEntryReportProps = {
   id?: string;
   month: Month;
   year: number;
@@ -22,16 +22,16 @@ export type MothlyEntryReportProps = {
   summary?: Summary;
 };
 
-export interface IMothlyEntryReport {
+export interface IMonthlyEntryReport {
   get id(): string;
   get month(): Month;
   get year(): number;
   get account(): string;
   get summary(): Summary;
-  toJSON(): MothlyEntryReportProps;
+  toJSON(): MonthlyEntryReportProps;
 }
 
-class MothlyEntryReport implements IMothlyEntryReport {
+class MonthlyEntryReport implements IMonthlyEntryReport {
   private _id: string;
   private _month: Month;
   private _year: number;
@@ -73,7 +73,7 @@ class MothlyEntryReport implements IMothlyEntryReport {
     return this._summary;
   }
 
-  public toJSON(): MothlyEntryReportProps {
+  public toJSON(): MonthlyEntryReportProps {
     return {
       id: this._id,
       month: this._month,
@@ -89,7 +89,7 @@ class MothlyEntryReport implements IMothlyEntryReport {
   }
 
   private createValidator(): Validation {
-    const validations: Validation<MothlyEntryReportProps>[] = [
+    const validations: Validation<MonthlyEntryReportProps>[] = [
       new UUIDValidation('id'),
 
       new EnumValidation('month', Month, 'Month'),
@@ -104,9 +104,9 @@ class MothlyEntryReport implements IMothlyEntryReport {
   }
 }
 
-export class MothlyEntryReportFactory {
-  public static create(props: MothlyEntryReportProps): IMothlyEntryReport {
-    return new MothlyEntryReport(
+export class MonthlyEntryReportFactory {
+  public static create(props: MonthlyEntryReportProps): IMonthlyEntryReport {
+    return new MonthlyEntryReport(
       props.id,
       props.month,
       props.year,

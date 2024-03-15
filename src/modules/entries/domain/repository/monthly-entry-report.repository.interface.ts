@@ -1,8 +1,8 @@
 import { ICreate } from '@shared/domain/repositories';
 import {
-  IMothlyEntryReport,
-  MothlyEntryReportProps,
+  IMonthlyEntryReport,
+  MonthlyEntryReportProps,
 } from '@entries/domain/entities';
 
 export interface IMothlyEntryReportRepository
-  extends ICreate<MothlyEntryReportProps, IMothlyEntryReport> {}
+  extends ICreate<MonthlyEntryReportProps, IMonthlyEntryReport> {}
