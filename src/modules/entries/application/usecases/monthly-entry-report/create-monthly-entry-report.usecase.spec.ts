@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { Month } from '@shared/domain/enums';
-import { BadRequestError } from '@shared/domain/errors';
 import { CreateMothlyEntryReport } from '@entries/application/usecases';
 import { IMothlyEntryReportRepository } from '@entries/domain/repository';
+import { IMothlyEntryReportDataGetway } from '@entries/infra/data/getways';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 
 describe('CreateMothlyEntryReport.UseCase unit tests', () => {
@@ -14,6 +14,7 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
 
   let sut: CreateMothlyEntryReport.UseCase;
   let mockedMothlyEntryReportRepo: IMothlyEntryReportRepository;
+  let mothlyEntryReportDataGetway: IMothlyEntryReportDataGetway;
   let financeAccountFacade: IFinanceAccountFacade;
 
   beforeEach(() => {
@@ -23,8 +24,12 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
     financeAccountFacade = {
       findById: jest.fn().mockResolvedValue({ id: mockedInput.accountId }),
     } as any as IFinanceAccountFacade;
+    mothlyEntryReportDataGetway = {
+      findByYearMonthAndAccount: jest.fn().mockResolvedValue(null),
+    } as any as IMothlyEntryReportDataGetway;
     sut = new CreateMothlyEntryReport.UseCase(
       mockedMothlyEntryReportRepo,
+      mothlyEntryReportDataGetway,
       financeAccountFacade,
     );
   });
@@ -33,31 +38,5 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
     await expect(sut.execute(mockedInput)).resolves.not.toThrow();
     expect(financeAccountFacade.findById).toHaveBeenCalledTimes(1);
     expect(mockedMothlyEntryReportRepo.create).toHaveBeenCalledTimes(1);
-  });
-
-  it('should throw a BadRequestError if there is no account with given accountId', async () => {
-    jest.spyOn(financeAccountFacade, 'findById').mockResolvedValueOnce(null);
-
-    expect(sut.execute(mockedInput)).rejects.toThrow(
-      new BadRequestError('account do not exists'),
-    );
-  });
-
-  it('should throw if financeAccountFacade.findById throws', async () => {
-    jest.spyOn(financeAccountFacade, 'findById').mockImplementationOnce(() => {
-      throw new Error('');
-    });
-
-    expect(sut.execute(mockedInput)).rejects.toThrow();
-  });
-
-  it('should throw if MothlyEntryReportRepo.create throws', async () => {
-    jest
-      .spyOn(mockedMothlyEntryReportRepo, 'create')
-      .mockImplementationOnce(() => {
-        throw new Error('');
-      });
-
-    expect(sut.execute(mockedInput)).rejects.toThrow();
   });
 });

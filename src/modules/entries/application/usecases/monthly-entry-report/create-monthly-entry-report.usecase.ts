@@ -1,9 +1,9 @@
 import { Month } from '@shared/domain/enums';
 import { DefaultUseCase } from '@shared/domain/usecases';
-import { BadRequestError } from '@shared/domain/errors';
 import { IMothlyEntryReportRepository } from '@entries/domain/repository';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
-import { MothlyEntryReportFactory } from '@entries/domain/entities';
+import { IMothlyEntryReportDataGetway } from '@entries/infra/data/getways';
+import { CreateMothlyEntryReportService } from '@entries/domain/services';
 
 export namespace CreateMothlyEntryReport {
   export type Input = {
@@ -17,24 +17,17 @@ export namespace CreateMothlyEntryReport {
   export class UseCase implements DefaultUseCase<Input, Output> {
     constructor(
       private readonly mothlyEntryReportRepo: IMothlyEntryReportRepository,
+      private readonly mothlyEntryReportDataGetway: IMothlyEntryReportDataGetway,
       private readonly financeAccountFacade: IFinanceAccountFacade,
     ) {}
 
     public async execute({ accountId, month, year }: Input): Promise<Output> {
-      const account = await this.financeAccountFacade.findById({
-        id: accountId,
-        selectedfields: ['id'],
-      });
-      if (!account) {
-        throw new BadRequestError('account do not exists');
-      }
-
-      const mothlyEntryReport = MothlyEntryReportFactory.create({
-        account: accountId,
-        month,
-        year,
-      });
-      await this.mothlyEntryReportRepo.create(mothlyEntryReport.toJSON());
+      const createMothlyEntryReportService = new CreateMothlyEntryReportService(
+        this.mothlyEntryReportRepo,
+        this.mothlyEntryReportDataGetway,
+        this.financeAccountFacade,
+      );
+      await createMothlyEntryReportService.create({ year, month, accountId });
     }
   }
 }
