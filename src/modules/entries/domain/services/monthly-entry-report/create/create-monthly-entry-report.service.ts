@@ -3,7 +3,7 @@ import {
   MonthlyEntryReportFactory,
 } from '@entries/domain/entities';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
-import { IMothlyEntryReportDataGetway } from '@entries/infra/data/getways';
+import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 import { Month } from '@shared/domain/enums';
 import { BadRequestError } from '@shared/domain/errors';
@@ -17,7 +17,7 @@ export interface CreateMothlyEntryReportDto {
 export class CreateMothlyEntryReportService {
   constructor(
     private readonly mothlyEntryReportRepo: IMonthlyEntryReportRepository,
-    private readonly mothlyEntryReportDataGetway: IMothlyEntryReportDataGetway,
+    private readonly mothlyEntryReportDataGetway: IMonthlyEntryReportDataGetway,
     private readonly financeAccountFacade: IFinanceAccountFacade,
   ) {}
 

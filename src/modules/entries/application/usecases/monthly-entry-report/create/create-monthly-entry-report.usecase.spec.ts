@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Month } from '@shared/domain/enums';
 import { CreateMothlyEntryReport } from '@entries/application/usecases';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
-import { IMothlyEntryReportDataGetway } from '@entries/infra/data/getways';
+import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 
 describe('CreateMothlyEntryReport.UseCase unit tests', () => {
@@ -14,7 +14,7 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
 
   let sut: CreateMothlyEntryReport.UseCase;
   let mockedMothlyEntryReportRepo: IMonthlyEntryReportRepository;
-  let mothlyEntryReportDataGetway: IMothlyEntryReportDataGetway;
+  let mothlyEntryReportDataGetway: IMonthlyEntryReportDataGetway;
   let financeAccountFacade: IFinanceAccountFacade;
 
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
     } as any as IFinanceAccountFacade;
     mothlyEntryReportDataGetway = {
       findByYearMonthAndAccount: jest.fn().mockResolvedValue(null),
-    } as any as IMothlyEntryReportDataGetway;
+    } as any as IMonthlyEntryReportDataGetway;
     sut = new CreateMothlyEntryReport.UseCase(
       mockedMothlyEntryReportRepo,
       mothlyEntryReportDataGetway,
