@@ -7,7 +7,7 @@ import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
 
 export class MonthlyEntryReportDataGetway
   extends DatabaseUtils<MonthlyEntryReportProps>
-  implements IMonthlyEntryReportDataGetway<MonthlyEntryReportProps>
+  implements IMonthlyEntryReportDataGetway
 {
   public static instance: MonthlyEntryReportDataGetway | null = null;
   public monthlyEntryReportRepo: Repository<MonthlyEntryReportEntity>;
@@ -37,6 +37,7 @@ export class MonthlyEntryReportDataGetway
 
     return this.instance;
   }
+
   public async findByYearMonthAndAccount(
     year: number,
     month: Month,
