@@ -9,8 +9,8 @@ import {
 import { MonthlyEntryReportProps } from '@entries/domain/entities';
 import { MonthlyEntryReportEntity } from '@entries/infra/data/entities';
 import { FinanceAccountProps } from '@finance-accounts/domain/entities';
-import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
+import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
 
 describe('MonthlyEntryReportDataGetway integration tests', () => {
   let sut: IMonthlyEntryReportDataGetway;
