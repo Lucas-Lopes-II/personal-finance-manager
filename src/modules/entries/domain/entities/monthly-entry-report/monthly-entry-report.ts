@@ -11,7 +11,7 @@ import { randomUUID } from 'node:crypto';
 
 export type Summary = Array<{
   categoryName: string;
-  total: string;
+  total: number;
 }>;
 
 export type MonthlyEntryReportProps = {

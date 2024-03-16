@@ -5,7 +5,7 @@ import {
   CreateMothlyEntryReportDto,
   CreateMothlyEntryReportService,
 } from '@entries/domain/services';
-import { IMothlyEntryReportRepository } from '@entries/domain/repository';
+import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { IMothlyEntryReportDataGetway } from '@entries/infra/data/getways';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 
@@ -17,14 +17,14 @@ describe('MothlyEntryReportService unit tests', () => {
   };
 
   let sut: CreateMothlyEntryReportService;
-  let mockedMothlyEntryReportRepo: IMothlyEntryReportRepository;
+  let mockedMothlyEntryReportRepo: IMonthlyEntryReportRepository;
   let mothlyEntryReportDataGetway: IMothlyEntryReportDataGetway;
   let financeAccountFacade: IFinanceAccountFacade;
 
   beforeEach(() => {
     mockedMothlyEntryReportRepo = {
       create: jest.fn().mockResolvedValue(undefined),
-    } as any as IMothlyEntryReportRepository;
+    } as any as IMonthlyEntryReportRepository;
     financeAccountFacade = {
       findById: jest.fn().mockResolvedValue({ id: mockedInput.accountId }),
     } as any as IFinanceAccountFacade;
