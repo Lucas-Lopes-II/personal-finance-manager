@@ -9,6 +9,7 @@ export namespace CreateMothlyEntryReport {
   export type Input = {
     month: Month;
     year: number;
+    actionDoneBy: string;
     accountId: string;
   };
 
@@ -21,13 +22,18 @@ export namespace CreateMothlyEntryReport {
       private readonly financeAccountFacade: IFinanceAccountFacade,
     ) {}
 
-    public async execute({ accountId, month, year }: Input): Promise<Output> {
+    public async execute(input: Input): Promise<Output> {
       const createMothlyEntryReportService = new CreateMothlyEntryReportService(
         this.mothlyEntryReportRepo,
         this.mothlyEntryReportDataGetway,
         this.financeAccountFacade,
       );
-      await createMothlyEntryReportService.create({ year, month, accountId });
+      await createMothlyEntryReportService.create({
+        year: input.year,
+        month: input.month,
+        accountId: input.accountId,
+        actionDoneBy: input.actionDoneBy,
+      });
     }
   }
 }

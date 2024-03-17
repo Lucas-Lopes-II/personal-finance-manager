@@ -9,6 +9,7 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
   const mockedInput: CreateMothlyEntryReport.Input = {
     month: Month.JANUARY,
     year: 2023,
+    actionDoneBy: randomUUID(),
     accountId: randomUUID(),
   };
 
@@ -22,7 +23,10 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
       create: jest.fn().mockResolvedValue(undefined),
     } as any as IMonthlyEntryReportRepository;
     financeAccountFacade = {
-      findById: jest.fn().mockResolvedValue({ id: mockedInput.accountId }),
+      findById: jest.fn().mockResolvedValue({
+        id: mockedInput.accountId,
+        users: [mockedInput.actionDoneBy],
+      }),
     } as any as IFinanceAccountFacade;
     mothlyEntryReportDataGetway = {
       findByYearMonthAndAccount: jest.fn().mockResolvedValue(null),
