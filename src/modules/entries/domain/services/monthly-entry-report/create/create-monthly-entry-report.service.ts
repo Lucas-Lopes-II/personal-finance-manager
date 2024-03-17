@@ -6,11 +6,12 @@ import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 import { Month } from '@shared/domain/enums';
-import { BadRequestError } from '@shared/domain/errors';
+import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 
 export interface CreateMothlyEntryReportDto {
   month: Month;
   year: number;
+  actionDoneBy?: string;
   accountId: string;
 }
 
@@ -30,6 +31,13 @@ export class CreateMothlyEntryReportService {
     });
     if (!account) {
       throw new BadRequestError('account do not exists');
+    }
+
+    const actionDoNotDoneByAccountOwner = !account.users.includes(
+      data.actionDoneBy,
+    );
+    if (actionDoNotDoneByAccountOwner) {
+      throw new ForbiddenError('Action not allowed');
     }
 
     const mothlyEntryWithReportYearMonthAndAccountExists =
