@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { Month } from '@shared/domain/enums';
-import { BadRequestError } from '@shared/domain/errors';
+import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 import {
   CreateMothlyEntryReportDto,
   CreateMothlyEntryReportService,
@@ -13,6 +13,7 @@ describe('MothlyEntryReportService unit tests', () => {
   const mockedInput: CreateMothlyEntryReportDto = {
     month: Month.JANUARY,
     year: 2023,
+    actionDoneBy: randomUUID(),
     accountId: randomUUID(),
   };
 
@@ -26,7 +27,10 @@ describe('MothlyEntryReportService unit tests', () => {
       create: jest.fn().mockResolvedValue(undefined),
     } as any as IMonthlyEntryReportRepository;
     financeAccountFacade = {
-      findById: jest.fn().mockResolvedValue({ id: mockedInput.accountId }),
+      findById: jest.fn().mockResolvedValue({
+        id: mockedInput.accountId,
+        users: [mockedInput.actionDoneBy],
+      }),
     } as any as IFinanceAccountFacade;
     mothlyEntryReportDataGetway = {
       findByYearMonthAndAccount: jest.fn().mockResolvedValue(null),
@@ -52,7 +56,7 @@ describe('MothlyEntryReportService unit tests', () => {
   it('should throw a BadRequestError if there is no account with given accountId', async () => {
     jest.spyOn(financeAccountFacade, 'findById').mockResolvedValueOnce(null);
 
-    expect(sut.create(mockedInput)).rejects.toThrow(
+    await expect(sut.create(mockedInput)).rejects.toThrow(
       new BadRequestError('account do not exists'),
     );
   });
@@ -62,7 +66,17 @@ describe('MothlyEntryReportService unit tests', () => {
       throw new Error('');
     });
 
-    expect(sut.create(mockedInput)).rejects.toThrow();
+    await expect(sut.create(mockedInput)).rejects.toThrow();
+  });
+
+  it('should throw a ForbiddenError if action do not done by account owner', async () => {
+    jest
+      .spyOn(financeAccountFacade, 'findById')
+      .mockResolvedValueOnce({ ...mockedInput, users: [randomUUID()] });
+
+    await expect(sut.create(mockedInput)).rejects.toThrow(
+      new ForbiddenError('Action not allowed'),
+    );
   });
 
   it('should throw a BadRequestError if MothlyEntryReport with given year, month and account already exists', async () => {
@@ -70,7 +84,7 @@ describe('MothlyEntryReportService unit tests', () => {
       .spyOn(mothlyEntryReportDataGetway, 'findByYearMonthAndAccount')
       .mockResolvedValueOnce({ id: randomUUID() });
 
-    expect(sut.create(mockedInput)).rejects.toThrow(
+    await expect(sut.create(mockedInput)).rejects.toThrow(
       new BadRequestError('There is already a record for this year and month'),
     );
   });
@@ -82,7 +96,7 @@ describe('MothlyEntryReportService unit tests', () => {
         throw new Error('');
       });
 
-    expect(sut.create(mockedInput)).rejects.toThrow();
+    await expect(sut.create(mockedInput)).rejects.toThrow();
   });
 
   it('should throw if MothlyEntryReportRepo.create throws', async () => {
@@ -92,6 +106,6 @@ describe('MothlyEntryReportService unit tests', () => {
         throw new Error('');
       });
 
-    expect(sut.create(mockedInput)).rejects.toThrow();
+    await expect(sut.create(mockedInput)).rejects.toThrow();
   });
 });
