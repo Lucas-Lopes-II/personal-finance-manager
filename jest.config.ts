@@ -36,6 +36,7 @@ export default {
     '.guard.ts',
     '.strategy.ts',
     '.decorator.ts',
+    '-e2e.utils.ts',
     'e2e.utils.ts',
     '-error.ts',
     '.+/infra/main/.*\\.controller\\.ts$',

@@ -10,7 +10,7 @@ export class MonthlyEntryReportUsecaseFactory {
     MonthlyEntryReportDataGetwayFactory.create();
   private static financeAccountFacade = FinanceAccountFacadeFactory.create();
 
-  public static CreateMothlyEntryReport(): CreateMothlyEntryReport.UseCase {
+  public static createMothlyEntryReport(): CreateMothlyEntryReport.UseCase {
     return new CreateMothlyEntryReport.UseCase(
       this.monthlyEntryReportRepo,
       this.monthlyEntryReportGetway,
