@@ -64,7 +64,7 @@ describe('FinanceAccountRepository integration tests', () => {
 
   describe('create', () => {
     it(`should create a FinanceAccount with first FinanceAccountUser`, async () => {
-      const createdUser = userRepo.create(userInput);
+      const createdUser = userRepo.create(userData);
       await userRepo.save(createdUser);
 
       const input = FinanceAccountFactory.create({

@@ -3,12 +3,14 @@ import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/re
 import { randomUUID } from 'crypto';
 
 export class EntriesE2EUtilities {
-  public static async createFinanceAccount(): Promise<FinanceAccountProps> {
+  public static async createFinanceAccount(
+    users: string[] = [],
+  ): Promise<FinanceAccountProps> {
     const financeAccountRepo = FinanceAccountRepositoryFactory.create();
     const data: FinanceAccountProps = {
       id: randomUUID(),
       name: 'test account',
-      users: [],
+      users,
       date: new Date().toISOString(),
     };
     await financeAccountRepo.create(data);

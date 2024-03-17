@@ -29,8 +29,7 @@ describe('MonthlyEntryReportController E2E tests', () => {
 
     try {
       await dataSource.initialize();
-      financeAccount = await EntriesE2EUtilities.createFinanceAccount();
-      await E2EUtilities.createUser({
+      const user = await E2EUtilities.createUser({
         name: 'test',
         email: 'test@test.com',
         password: 'Test@123',
@@ -40,6 +39,9 @@ describe('MonthlyEntryReportController E2E tests', () => {
         server,
         { email: 'test@test.com', password: 'Test@123' },
       );
+      financeAccount = await EntriesE2EUtilities.createFinanceAccount([
+        user?.['id'],
+      ]);
     } catch (error) {
       console.log(error);
     }
@@ -68,6 +70,17 @@ describe('MonthlyEntryReportController E2E tests', () => {
         .set('Authorization', `Bearer ${authToken}`);
 
       expect(response.status).toStrictEqual(201);
+    });
+
+    it('should return a ForbiddenError if action do not done by account owner', async () => {
+      const stubfinanceAccount =
+        await EntriesE2EUtilities.createFinanceAccount();
+      const response = await request(server)
+        .post('/monthly-entry-reports')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({ ...mockedDTO, accountId: stubfinanceAccount.id });
+
+      expect(response.status).toStrictEqual(403);
     });
 
     it('should return Unauthorized Error', async () => {
