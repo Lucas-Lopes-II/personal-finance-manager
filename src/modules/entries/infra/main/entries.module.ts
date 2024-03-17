@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
 
-@Module({})
+import { MonthlyEntryReportController } from '@entries/infra/controllers';
+
+@Module({ controllers: [MonthlyEntryReportController] })
 export class EntriesModule {}
