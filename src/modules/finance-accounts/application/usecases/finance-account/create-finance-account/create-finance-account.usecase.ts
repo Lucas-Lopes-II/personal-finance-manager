@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { BadRequestError } from '@shared/domain/errors';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { FinanceAccountFactory } from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { IUserRepository } from '@users/domain/repositories';

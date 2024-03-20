@@ -1,6 +1,6 @@
 import { IHasher } from '@shared/domain/crypto';
 import { BadRequestError } from '@shared/domain/errors';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { IUserRepository } from '@users/domain/repositories';
 
 export namespace Signin {

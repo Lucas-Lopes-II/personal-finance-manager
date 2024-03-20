@@ -1,4 +1,4 @@
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { FinanceAccountProps } from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 

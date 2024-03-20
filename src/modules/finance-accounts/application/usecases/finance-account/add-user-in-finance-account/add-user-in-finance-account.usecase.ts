@@ -1,5 +1,5 @@
 import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import {
   FinanceAccountFactory,
   FinanceAccountProps,

@@ -1,5 +1,5 @@
 import { Month } from '@shared/domain/enums';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';

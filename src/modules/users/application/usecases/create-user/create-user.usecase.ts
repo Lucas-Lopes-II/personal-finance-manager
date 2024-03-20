@@ -1,6 +1,6 @@
 import { UserFactory } from '@users/domain/entities';
 import { IHasher } from '@shared/domain/crypto';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { IUserRepository } from '@users/domain/repositories';
 import { StrongPasswordValidation } from '@shared/domain/validations';
 import { ConflictError } from '@shared/domain/errors';

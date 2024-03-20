@@ -1,5 +1,5 @@
 import { BadRequestError } from '@shared/domain/errors';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { UserFactory, UserProps } from '@users/domain/entities';
 import { IUserRepository } from '@users/domain/repositories';
 

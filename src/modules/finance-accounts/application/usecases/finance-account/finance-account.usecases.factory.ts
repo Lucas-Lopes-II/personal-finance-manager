@@ -3,7 +3,7 @@ import {
   Validation,
   ValidationComposite,
 } from '@shared/domain/validations';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import {
   CreateFinanceAccount,
   AddUserInFinanceAccount,

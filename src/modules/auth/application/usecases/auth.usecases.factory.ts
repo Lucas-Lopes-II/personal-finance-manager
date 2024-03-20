@@ -6,7 +6,7 @@ import {
 import { IUserRepository } from '@users/domain/repositories';
 import { userRepositoryFactory } from '@users/infra/data/repositories';
 import { IHasher } from '@shared/domain/crypto';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { hasherFactory } from '@shared/infra/crypto/hasher';
 import { IJsonWebToken, JwtFactory } from '@shared/infra/jwt';
 

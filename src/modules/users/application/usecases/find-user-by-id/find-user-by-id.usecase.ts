@@ -1,5 +1,5 @@
 import { NotFoundError } from '@shared/domain/errors';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { UUIDValidation, Validation } from '@shared/domain/validations';
 import { IUserRepository } from '@users/domain/repositories';
 

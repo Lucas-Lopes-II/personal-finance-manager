@@ -1,5 +1,5 @@
 import { requestUser } from '@auth/infra/dtos';
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { IJsonWebToken } from '@shared/infra/jwt';
 
 export namespace GenerateSigninToken {

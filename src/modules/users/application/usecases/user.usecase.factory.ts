@@ -1,4 +1,4 @@
-import { DefaultUseCase } from '@shared/domain/usecases';
+import { DefaultUseCase } from '@shared/application/usecases';
 import { CreateUser } from '@users/application/usecases';
 import { IHasher } from '@shared/domain/crypto';
 import { IUserRepository } from '@users/domain/repositories';
