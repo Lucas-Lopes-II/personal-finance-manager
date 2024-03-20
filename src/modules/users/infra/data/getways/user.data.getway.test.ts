@@ -1,9 +1,12 @@
 import { Repository } from 'typeorm';
 import { randomUUID } from 'node:crypto';
 import { dataSource } from '@shared/infra/database';
+import {
+  IUserDataGetway,
+  UserDataGetwayFactory,
+} from '@users/infra/data/getways';
 import { UserProps } from '@users/domain/entities';
 import { UserEntity } from '@users/infra/data/entities';
-import { IUserDataGetway, UserDataGetway } from '@users/infra/data/getways';
 
 describe('UserDataGetway integration tests', () => {
   let sut: IUserDataGetway;
@@ -18,7 +21,7 @@ describe('UserDataGetway integration tests', () => {
   beforeAll(async () => {
     try {
       await dataSource.initialize();
-      sut = UserDataGetway.createInstance(dataSource);
+      sut = UserDataGetwayFactory.create();
       userRepo = dataSource.getRepository(UserEntity);
     } catch (error) {
       console.log(error);
