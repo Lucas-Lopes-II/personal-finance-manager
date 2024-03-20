@@ -5,7 +5,7 @@ import {
   IFindByEmail,
   IFindById,
   IUpdate,
-} from '@shared/domain/repositories';
+} from '@shared/domain/data-getways';
 
 export interface IUserRepository<T = IUser>
   extends ICreate<T, T>,

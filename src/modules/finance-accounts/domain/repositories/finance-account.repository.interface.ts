@@ -3,7 +3,7 @@ import {
   ICreate,
   IFindById,
   IFindByUserId,
-} from '@shared/domain/repositories';
+} from '@shared/domain/data-getways';
 import { FinanceAccountProps } from '@finance-accounts/domain/entities';
 
 export interface IFinanceAccountRepository<T = FinanceAccountProps>

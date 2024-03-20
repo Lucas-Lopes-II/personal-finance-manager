@@ -1,4 +1,4 @@
-import { ICreate } from '@shared/domain/repositories';
+import { ICreate } from '@shared/domain/data-getways';
 import { MonthlyEntryReportProps } from '@entries/domain/entities';
 
 export interface IMonthlyEntryReportRepository
