@@ -1,9 +1,10 @@
-import request from 'supertest';
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { dataSource } from '@shared/infra/database';
+
+import request from 'supertest';
 import { AppModule } from './../../../../../app.module';
 import { E2EUtilities } from '@shared/test';
+import { dataSource } from '@shared/infra/database';
 import { globalExeptionFiltersFactory } from '@shared/infra/exception-filters';
 import { FindUserById } from '@users/application/usecases';
 

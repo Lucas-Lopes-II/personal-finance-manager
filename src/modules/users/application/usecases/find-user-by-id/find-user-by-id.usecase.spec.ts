@@ -26,10 +26,36 @@ describe('FindUserById.UseCase unit tests', () => {
   });
 
   it('should find an user by id', async () => {
-    const result = await sut.execute(mockedInput);
+    let result = await sut.execute(mockedInput);
 
     expect(result).toStrictEqual(mockedOutput);
     expect(mockedUserGetway.findById).toHaveBeenCalledTimes(1);
+
+    let output = {
+      ...mockedOutput,
+      isAdmin: undefined,
+    };
+    jest.spyOn(mockedUserGetway, 'findById').mockResolvedValueOnce(output);
+    result = await sut.execute({
+      ...mockedInput,
+      selectedfields: ['id', 'name', 'email'],
+    });
+
+    expect(result).toStrictEqual(output);
+
+    output = {
+      id: undefined,
+      isAdmin: true,
+      email: undefined,
+      name: undefined,
+    };
+    jest.spyOn(mockedUserGetway, 'findById').mockResolvedValueOnce(output);
+    result = await sut.execute({
+      ...mockedInput,
+      selectedfields: ['isAdmin'],
+    });
+
+    expect(result).toStrictEqual(output);
   });
 
   it('should throw a NotFoundError if userReadingRepo.findById return null', async () => {
