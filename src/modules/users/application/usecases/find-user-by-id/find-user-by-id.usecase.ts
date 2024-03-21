@@ -1,7 +1,7 @@
 import { NotFoundError } from '@shared/domain/errors';
 import { DefaultUseCase } from '@shared/application/usecases';
 import { UUIDValidation, Validation } from '@shared/domain/validations';
-import { IUserRepository } from '@users/domain/repositories';
+import { IUserDataGetway } from '@users/infra/data/getways';
 
 export namespace FindUserById {
   export type Input = {
@@ -17,13 +17,13 @@ export namespace FindUserById {
   };
 
   export class UseCase implements DefaultUseCase<Input, Output> {
-    constructor(private readonly userRepository: IUserRepository) {}
+    constructor(private readonly userGetway: IUserDataGetway) {}
 
     public async execute(input: Input): Promise<Output> {
       const validator: Validation<Input> = new UUIDValidation('id');
       validator.validate(input);
 
-      const user = await this.userRepository.findById(
+      const user = await this.userGetway.findById(
         input.id,
         input.selectedfields,
       );

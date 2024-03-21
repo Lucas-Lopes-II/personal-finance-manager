@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { BadRequestError, NotFoundError } from '@shared/domain/errors';
 import { FindUserById } from '@users/application/usecases';
-import { IUserRepository } from '@users/domain/repositories';
+import { IUserDataGetway } from '@users/infra/data/getways';
 
 describe('FindUserById.UseCase unit tests', () => {
   const mockedInput: FindUserById.Input = {
@@ -15,25 +15,25 @@ describe('FindUserById.UseCase unit tests', () => {
   };
 
   let sut: FindUserById.UseCase;
-  let mockedUserRepo: IUserRepository;
+  let mockedUserGetway: IUserDataGetway;
 
   beforeEach(() => {
-    mockedUserRepo = {
+    mockedUserGetway = {
       findById: jest.fn().mockResolvedValue(mockedOutput),
-    } as any as IUserRepository;
+    } as any as IUserDataGetway;
 
-    sut = new FindUserById.UseCase(mockedUserRepo);
+    sut = new FindUserById.UseCase(mockedUserGetway);
   });
 
   it('should find an user by id', async () => {
     const result = await sut.execute(mockedInput);
 
     expect(result).toStrictEqual(mockedOutput);
-    expect(mockedUserRepo.findById).toHaveBeenCalledTimes(1);
+    expect(mockedUserGetway.findById).toHaveBeenCalledTimes(1);
   });
 
   it('should throw a NotFoundError if userReadingRepo.findById return null', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(null);
+    jest.spyOn(mockedUserGetway, 'findById').mockResolvedValueOnce(null);
 
     await expect(sut.execute(mockedInput)).rejects.toThrow(
       new NotFoundError('user not found'),
@@ -41,7 +41,7 @@ describe('FindUserById.UseCase unit tests', () => {
   });
 
   it('should throw if userReadingRepo.findById throws', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockImplementationOnce(() => {
+    jest.spyOn(mockedUserGetway, 'findById').mockImplementationOnce(() => {
       throw new Error('');
     });
 
