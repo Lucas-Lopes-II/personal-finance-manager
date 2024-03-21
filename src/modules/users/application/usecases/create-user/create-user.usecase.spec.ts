@@ -15,6 +15,7 @@ describe('CreateUserUseCase unit tests', () => {
     id: input.id,
     name: mockedInput.name,
     email: mockedInput.email,
+    isAdmin: false,
   };
 
   let sut: CreateUser.UseCase;

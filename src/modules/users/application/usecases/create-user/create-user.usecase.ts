@@ -16,6 +16,7 @@ export namespace CreateUser {
     id: string;
     name: string;
     email: string;
+    isAdmin: boolean;
   };
 
   export class UseCase implements DefaultUseCase<Input, Output> {
@@ -49,6 +50,7 @@ export namespace CreateUser {
         id: userData.id,
         name: userData.name,
         email: userData.email,
+        isAdmin: userData.isAdmin,
       };
     }
   }
