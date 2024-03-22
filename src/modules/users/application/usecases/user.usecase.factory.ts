@@ -1,11 +1,15 @@
 import { IHasher } from '@shared/domain/crypto';
 import { hasherFactory } from '@shared/infra/crypto/hasher';
-import { CreateUser, FindUserById } from '@users/application/usecases';
-import { IUserRepository } from '@users/domain/repositories';
 import {
   IUserDataGetway,
   UserDataGetwayFactory,
 } from '@users/infra/data/getways';
+import {
+  BecomeAdmin,
+  CreateUser,
+  FindUserById,
+} from '@users/application/usecases';
+import { IUserRepository } from '@users/domain/repositories';
 import { userRepositoryFactory } from '@users/infra/data/repositories';
 
 export class UserUseCasesFactory {
@@ -20,5 +24,9 @@ export class UserUseCasesFactory {
 
   public static findUserById(): FindUserById.UseCase {
     return new FindUserById.UseCase(this.getway);
+  }
+
+  public static becomeAdmin(): BecomeAdmin.UseCase {
+    return new BecomeAdmin.UseCase(this.repo);
   }
 }
