@@ -53,44 +53,6 @@ describe('UserRepository integration tests', () => {
     });
   });
 
-  describe('emailExists', () => {
-    it(`should return true becuse user with given email exists`, async () => {
-      const user = await sut.create(input);
-      const result = await sut.emailExists(user.email);
-
-      expect(result).toBeTruthy();
-    });
-
-    it(`should return false becuse user with given email do not exists`, async () => {
-      const result = await sut.emailExists(data.email);
-
-      expect(result).toBeFalsy();
-    });
-  });
-
-  describe('findByEmail', () => {
-    it(`should find an user by email`, async () => {
-      await sut.create(input);
-      const result = await sut.findByEmail(data.email);
-
-      expect(result.id).toStrictEqual(id);
-      expect(result.name).toStrictEqual('Name');
-      expect(result.email).toStrictEqual('email@example.com');
-    });
-
-    it(`should find an user by email with select fields`, async () => {
-      await sut.create(input);
-      const result = await sut.findByEmail(data.email, ['name', 'email']);
-
-      expect(result).toEqual({
-        name: 'Name',
-        email: 'email@example.com',
-      });
-      expect(result.id).toBeUndefined();
-      expect(result.password).toBeUndefined();
-    });
-  });
-
   describe('findById', () => {
     it(`should find an user by id`, async () => {
       await sut.create(input);

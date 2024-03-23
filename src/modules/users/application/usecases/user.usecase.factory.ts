@@ -20,7 +20,7 @@ export class UserUseCasesFactory {
     UserDataGetwayFactory.create();
 
   public static createUser(): CreateUser.UseCase {
-    return new CreateUser.UseCase(this.repo, this.hasher);
+    return new CreateUser.UseCase(this.repo, this.getway, this.hasher);
   }
 
   public static findUserById(): FindUserById.UseCase {

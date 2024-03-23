@@ -4,11 +4,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { randomUUID } from 'node:crypto';
 import { AppModule } from './../../../../../app.module';
-import { userRepositoryFactory } from '@users/infra/data/repositories';
-import { UserProps } from '@users/domain/entities';
 import { E2EUtilities } from '@shared/test';
 import { dataSource } from '@shared/infra/database';
 import { globalExeptionFiltersFactory } from '@shared/infra/exception-filters';
+import { UserProps } from '@users/domain/entities';
+import { UserDataGetwayFactory } from '@users/infra/data/getways';
 
 describe('AuthController E2E tests', () => {
   let app: INestApplication;
@@ -109,8 +109,8 @@ describe('AuthController E2E tests', () => {
     let user: UserProps;
 
     beforeAll(async () => {
-      const repo = userRepositoryFactory();
-      user = (await repo.findByEmail('test@test.com')) as UserProps;
+      const dataGetway = UserDataGetwayFactory.create();
+      user = (await dataGetway.findByEmail('test@test.com')) as UserProps;
     });
 
     it('should become admin user', async () => {

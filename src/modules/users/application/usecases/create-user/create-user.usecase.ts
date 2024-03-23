@@ -1,9 +1,10 @@
-import { UserFactory } from '@users/domain/entities';
 import { IHasher } from '@shared/domain/crypto';
-import { DefaultUseCase } from '@shared/application/usecases';
-import { IUserRepository } from '@users/domain/repositories';
-import { StrongPasswordValidation } from '@shared/domain/validations';
 import { ConflictError } from '@shared/domain/errors';
+import { DefaultUseCase } from '@shared/application/usecases';
+import { StrongPasswordValidation } from '@shared/domain/validations';
+import { UserFactory } from '@users/domain/entities';
+import { IUserDataGetway } from '@users/infra/data/getways';
+import { IUserRepository } from '@users/domain/repositories';
 
 export namespace CreateUser {
   export type Input = {
@@ -22,6 +23,7 @@ export namespace CreateUser {
   export class UseCase implements DefaultUseCase<Input, Output> {
     constructor(
       private readonly userRepository: IUserRepository,
+      private readonly userDataGetway: IUserDataGetway,
       private readonly hasher: IHasher,
     ) {}
 
@@ -32,7 +34,7 @@ export namespace CreateUser {
       });
 
       const existsRegistrationWithGivenEmail =
-        await this.userRepository.emailExists(user.email);
+        await this.userDataGetway.findByEmail(user.email, ['id']);
       if (existsRegistrationWithGivenEmail) {
         throw new ConflictError('email already exists');
       }

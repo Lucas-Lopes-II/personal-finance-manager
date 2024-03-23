@@ -3,6 +3,7 @@ import { ConflictError } from '@shared/domain/errors';
 import { CreateUser } from '@users/application/usecases';
 import { UserFactory } from '@users/domain/entities';
 import { IUserRepository } from '@users/domain/repositories';
+import { IUserDataGetway } from '@users/infra/data/getways';
 
 describe('CreateUserUseCase unit tests', () => {
   const mockedInput: CreateUser.Input = {
@@ -20,6 +21,7 @@ describe('CreateUserUseCase unit tests', () => {
 
   let sut: CreateUser.UseCase;
   let mockedUserRepo: IUserRepository;
+  let mockedUserDataGetway: IUserDataGetway;
   let mockedHasher: IHasher;
 
   beforeEach(() => {
@@ -27,33 +29,44 @@ describe('CreateUserUseCase unit tests', () => {
       create: jest.fn().mockResolvedValue(input),
       emailExists: jest.fn().mockResolvedValue(false),
     } as any as IUserRepository;
+    mockedUserDataGetway = {
+      findByEmail: jest.fn().mockResolvedValue(null),
+    } as any as IUserDataGetway;
     mockedHasher = {
       hash: jest.fn().mockResolvedValue('hashed value'),
     } as any as IHasher;
-    sut = new CreateUser.UseCase(mockedUserRepo, mockedHasher);
+    sut = new CreateUser.UseCase(
+      mockedUserRepo,
+      mockedUserDataGetway,
+      mockedHasher,
+    );
   });
 
   it('should create an user', async () => {
     const result = await sut.execute(mockedInput);
 
     expect(result).toStrictEqual(mockedOutput);
-    expect(mockedUserRepo.emailExists).toHaveBeenCalledTimes(1);
+    expect(mockedUserDataGetway.findByEmail).toHaveBeenCalledTimes(1);
     expect(mockedHasher.hash).toHaveBeenCalledTimes(1);
     expect(mockedUserRepo.create).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw a BadRequestError if userReadingRepo.emailExists return true', async () => {
-    jest.spyOn(mockedUserRepo, 'emailExists').mockResolvedValueOnce(true);
+  it('should throw a BadRequestError if mockedUserDataGetway.findByEmail return true', async () => {
+    jest
+      .spyOn(mockedUserDataGetway, 'findByEmail')
+      .mockResolvedValueOnce({ id: input.id });
 
     expect(sut.execute(mockedInput)).rejects.toThrow(
       new ConflictError('email already exists'),
     );
   });
 
-  it('should throw if userReadingRepo.emailExists throws', async () => {
-    jest.spyOn(mockedUserRepo, 'emailExists').mockImplementationOnce(() => {
-      throw new Error('');
-    });
+  it('should throw if mockedUserDataGetway.findByEmail throws', async () => {
+    jest
+      .spyOn(mockedUserDataGetway, 'findByEmail')
+      .mockImplementationOnce(() => {
+        throw new Error('');
+      });
 
     expect(sut.execute(mockedInput)).rejects.toThrow();
   });
