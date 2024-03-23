@@ -31,7 +31,12 @@ export class UserFacade implements IUserFacade {
       selectedfields: input.selectedfields as any,
     });
 
-    return data;
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      isAdmin: data.isAdmin,
+    };
   }
 
   public async becomeAdmin(
@@ -60,6 +65,12 @@ export class UserFacade implements IUserFacade {
       selectedfields: input.selectedfields as any,
     });
 
-    return data;
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      isAdmin: data.isAdmin,
+      password: data.password,
+    };
   }
 }

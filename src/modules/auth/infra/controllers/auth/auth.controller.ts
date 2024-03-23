@@ -10,26 +10,12 @@ import {
 } from '@nestjs/common';
 
 import { CurrentUser, IsPublic } from '@shared/infra/decorators';
-import { LocalAuthGuard, OnlyAdminGuard } from '@auth/infra/main/guards';
-import {
-  AuthRequest,
-  BecomeAdminUserDTO,
-  CreateUserDTO,
-} from '@auth/infra/dtos';
-import { UserUseCasesFactory } from '@users/application/usecases';
 import { AuthUseCasesFactory } from '@auth/application/usecases';
+import { AuthRequest, BecomeAdminUserDTO } from '@auth/infra/dtos';
+import { LocalAuthGuard, OnlyAdminGuard } from '@auth/infra/main/guards';
 
 @Controller('auth')
 export class AuthController {
-  @Post('sign-up')
-  @HttpCode(HttpStatus.CREATED)
-  @UseGuards(OnlyAdminGuard)
-  public signup(@Body() body: CreateUserDTO) {
-    const usecase = UserUseCasesFactory.createUser();
-
-    return usecase.execute(body);
-  }
-
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
