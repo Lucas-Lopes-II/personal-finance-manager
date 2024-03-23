@@ -63,4 +63,27 @@ describe('UserDataGetway integration tests', () => {
       expect(result.password).toBeUndefined();
     });
   });
+
+  describe('findByEmail', () => {
+    it(`should find an user by email`, async () => {
+      await userRepo.save(data);
+      const result = await sut.findByEmail(data.email);
+
+      expect(result.id).toStrictEqual(data.id);
+      expect(result.name).toStrictEqual('Name');
+      expect(result.email).toStrictEqual('email@example.com');
+    });
+
+    it(`should find an user by email with select fields`, async () => {
+      await userRepo.save(data);
+      const result = await sut.findByEmail(data.email, ['name', 'email']);
+
+      expect(result).toEqual({
+        name: 'Name',
+        email: 'email@example.com',
+      });
+      expect(result.id).toBeUndefined();
+      expect(result.password).toBeUndefined();
+    });
+  });
 });
