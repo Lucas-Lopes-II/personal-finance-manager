@@ -1,15 +1,22 @@
 import {
   BecomeAdminInput,
   BecomeAdminOutput,
+  FindUserByEmailInput,
+  FindUserByEmailOutput,
   FindUserByIdInput,
   FindUserByIdOutput,
   IUserFacade,
 } from '@users/infra/facades';
-import { BecomeAdmin, FindUserById } from '@users/application/usecases';
+import {
+  BecomeAdmin,
+  FindUserByEmail,
+  FindUserById,
+} from '@users/application/usecases';
 
 export type UserFacadeDependencies = {
   findByIdUsecase: FindUserById.UseCase;
   becomeAdminUsecase: BecomeAdmin.UseCase;
+  findByEmailUsecase: FindUserByEmail.UseCase;
 };
 
 export class UserFacade implements IUserFacade {
@@ -42,5 +49,17 @@ export class UserFacade implements IUserFacade {
       email: data.email,
       isAdmin: data.isAdmin,
     };
+  }
+
+  public async findByEmail(
+    input: FindUserByEmailInput,
+  ): Promise<FindUserByEmailOutput | Partial<FindUserByEmailOutput>> {
+    const { findByEmailUsecase } = this.dependencies;
+    const data = await findByEmailUsecase.execute({
+      email: input.email,
+      selectedfields: input.selectedfields as any,
+    });
+
+    return data;
   }
 }
