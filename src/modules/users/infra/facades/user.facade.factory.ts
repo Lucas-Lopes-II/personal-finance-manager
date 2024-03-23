@@ -10,6 +10,7 @@ export class UserFacadeFactory {
     const dependencies: UserFacadeDependencies = {
       findByIdUsecase: UserUseCasesFactory.findUserById(),
       becomeAdminUsecase: UserUseCasesFactory.becomeAdmin(),
+      findByEmailUsecase: UserUseCasesFactory.findUserByEmail(),
     };
 
     return new UserFacade(dependencies);
