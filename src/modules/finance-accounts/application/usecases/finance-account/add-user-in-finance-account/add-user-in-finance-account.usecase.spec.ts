@@ -1,13 +1,13 @@
-import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
+import { randomUUID } from 'node:crypto';
+import { Validation } from '@shared/domain/validations';
 import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
-import { IUserRepository } from '@users/domain/repositories';
-import { randomUUID } from 'crypto';
-import { AddUserInFinanceAccount } from './add-user-in-finance-account.usecase';
+import { IUserFacade } from '@users/infra/facades';
 import {
   FinanceAccountFactory,
   FinanceAccountProps,
 } from '@finance-accounts/domain/entities';
-import { Validation } from '@shared/domain/validations';
+import { AddUserInFinanceAccount } from './add-user-in-finance-account.usecase';
+import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 
 describe('AddUserInFinanceAccount.UseCase unit tests', () => {
   const mockedInput: AddUserInFinanceAccount.Input = {
@@ -26,7 +26,7 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
 
   let sut: AddUserInFinanceAccount.UseCase;
   let mockedFinanceAccountRepo: IFinanceAccountRepository;
-  let mockedUserRepo: IUserRepository;
+  let mockedUserFacade: IUserFacade;
   let mockedValidator: Validation;
 
   beforeEach(() => {
@@ -34,28 +34,28 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
       findById: jest.fn().mockResolvedValue(financeAccount.toJSON()),
       addUserInAccount: jest.fn().mockResolvedValue(undefined),
     } as any as IFinanceAccountRepository;
-    mockedUserRepo = {
+    mockedUserFacade = {
       findById: jest.fn().mockResolvedValue({ id: mockedInput.userId }),
-    } as any as IUserRepository;
+    } as any as IUserFacade;
     mockedValidator = {
       validate: jest.fn().mockReturnValue(undefined),
     } as any as Validation;
     sut = new AddUserInFinanceAccount.UseCase(
       mockedFinanceAccountRepo,
-      mockedUserRepo,
+      mockedUserFacade,
       mockedValidator,
     );
   });
 
   it('should add new user in FinanceAccount', async () => {
     await expect(sut.execute(mockedInput)).resolves.not.toThrow();
-    expect(mockedUserRepo.findById).toHaveBeenCalledTimes(1);
+    expect(mockedUserFacade.findById).toHaveBeenCalledTimes(1);
     expect(mockedFinanceAccountRepo.findById).toHaveBeenCalledTimes(1);
     expect(mockedFinanceAccountRepo.addUserInAccount).toHaveBeenCalledTimes(1);
   });
 
   it('should throw a BadRequestError if there is no user with given userId', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(null);
+    jest.spyOn(mockedUserFacade, 'findById').mockResolvedValueOnce(null);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(
       new BadRequestError('User do not exists'),
@@ -63,7 +63,7 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
   });
 
   it('should throw if userRepo.findById throws', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockImplementationOnce(() => {
+    jest.spyOn(mockedUserFacade, 'findById').mockImplementationOnce(() => {
       throw new Error('');
     });
 

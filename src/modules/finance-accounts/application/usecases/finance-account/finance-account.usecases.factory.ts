@@ -4,6 +4,9 @@ import {
   ValidationComposite,
 } from '@shared/domain/validations';
 import { DefaultUseCase } from '@shared/application/usecases';
+import { IUserRepository } from '@users/domain/repositories';
+import { IUserFacade, UserFacadeFactory } from '@users/infra/facades';
+import { userRepositoryFactory } from '@users/infra/data/repositories';
 import {
   CreateFinanceAccount,
   AddUserInFinanceAccount,
@@ -12,14 +15,13 @@ import {
 } from '@finance-accounts/application/usecases';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
-import { IUserRepository } from '@users/domain/repositories';
-import { userRepositoryFactory } from '@users/infra/data/repositories';
 
 export class FinanceAccountUseCasesFactory {
   private static readonly financeAccountRepository: IFinanceAccountRepository =
     FinanceAccountRepositoryFactory.create();
   private static readonly userRepository: IUserRepository =
     userRepositoryFactory();
+  public static readonly userFacade: IUserFacade = UserFacadeFactory.create();
 
   public static createFinanceAccount(): DefaultUseCase<
     CreateFinanceAccount.Input,
@@ -41,7 +43,7 @@ export class FinanceAccountUseCasesFactory {
 
     return new AddUserInFinanceAccount.UseCase(
       this.financeAccountRepository,
-      this.userRepository,
+      this.userFacade,
       validator,
     );
   }

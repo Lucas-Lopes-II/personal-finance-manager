@@ -1,12 +1,12 @@
-import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
+import { Validation } from '@shared/domain/validations';
 import { DefaultUseCase } from '@shared/application/usecases';
+import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
+import { IUserFacade } from '@users/infra/facades';
 import {
   FinanceAccountFactory,
   FinanceAccountProps,
 } from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
-import { IUserRepository } from '@users/domain/repositories';
-import { Validation } from '@shared/domain/validations';
 
 export namespace AddUserInFinanceAccount {
   export type Input = {
@@ -20,16 +20,17 @@ export namespace AddUserInFinanceAccount {
   export class UseCase implements DefaultUseCase<Input, Output> {
     constructor(
       private readonly financeAccountRepository: IFinanceAccountRepository,
-      private readonly userRepository: IUserRepository,
+      private readonly userFacade: IUserFacade,
       private readonly validator: Validation,
     ) {}
 
     public async execute(input: Input): Promise<Output> {
       this.validator.validate(input);
       const { accountId, actionDoneBy, userId } = input;
-      const newUserToAddExists = await this.userRepository.findById(userId, [
-        'id',
-      ]);
+      const newUserToAddExists = await this.userFacade.findById({
+        id: userId,
+        selectedfields: ['id'],
+      });
       if (!newUserToAddExists) {
         throw new BadRequestError('User do not exists');
       }
