@@ -29,7 +29,7 @@ export class FinanceAccountUseCasesFactory {
   > {
     return new CreateFinanceAccount.UseCase(
       this.financeAccountRepository,
-      this.userRepository,
+      this.userFacade,
     );
   }
 
