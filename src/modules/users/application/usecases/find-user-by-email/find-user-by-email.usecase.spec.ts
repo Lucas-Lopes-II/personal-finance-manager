@@ -12,6 +12,7 @@ describe('FindUserByEmail.UseCase unit tests', () => {
     name: 'test name',
     email: 'email@test.com',
     isAdmin: false,
+    password: 'dsjfdsofhsdh',
   };
 
   let sut: FindUserByEmail.UseCase;
@@ -38,7 +39,7 @@ describe('FindUserByEmail.UseCase unit tests', () => {
     jest.spyOn(mockedUserGetway, 'findByEmail').mockResolvedValueOnce(output);
     result = await sut.execute({
       ...mockedInput,
-      selectedfields: ['id', 'name', 'email'],
+      selectedfields: ['id', 'name', 'email', 'password'],
     });
 
     expect(result).toStrictEqual(output);
@@ -48,6 +49,7 @@ describe('FindUserByEmail.UseCase unit tests', () => {
       isAdmin: true,
       email: undefined,
       name: undefined,
+      password: undefined,
     };
     jest.spyOn(mockedUserGetway, 'findByEmail').mockResolvedValueOnce(output);
     result = await sut.execute({

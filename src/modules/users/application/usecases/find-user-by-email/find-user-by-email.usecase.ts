@@ -14,6 +14,7 @@ export namespace FindUserByEmail {
     name?: string;
     email?: string;
     isAdmin?: boolean;
+    password?: string;
   };
 
   export class UseCase implements DefaultUseCase<Input, Output> {
@@ -36,6 +37,7 @@ export namespace FindUserByEmail {
         name: user?.name || undefined,
         email: user?.email || undefined,
         isAdmin: typeof user?.isAdmin === 'boolean' ? user?.isAdmin : undefined,
+        password: user?.password || undefined,
       };
     }
   }

@@ -1,7 +1,7 @@
 import { IHasher } from '@shared/domain/crypto';
 import { BadRequestError } from '@shared/domain/errors';
 import { DefaultUseCase } from '@shared/application/usecases';
-import { IUserRepository } from '@users/domain/repositories';
+import { IUserFacade } from '@users/infra/facades';
 
 export namespace Signin {
   export type Input = {
@@ -18,18 +18,15 @@ export namespace Signin {
 
   export class UseCase implements DefaultUseCase<Input, Output> {
     constructor(
-      private readonly userRepository: IUserRepository,
+      private readonly userFacade: IUserFacade,
       private readonly hasher: IHasher,
     ) {}
 
     async execute(input: Input): Promise<Output> {
-      const user = await this.userRepository.findByEmail(input.email, [
-        'id',
-        'name',
-        'email',
-        'isAdmin',
-        'password',
-      ]);
+      const user = await this.userFacade.findByEmail({
+        email: input.email,
+        selectedfields: ['id', 'name', 'email', 'isAdmin', 'password'],
+      });
 
       if (user) {
         const isPasswordValid = await this.hasher.compare(

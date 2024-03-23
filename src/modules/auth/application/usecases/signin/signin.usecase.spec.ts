@@ -1,8 +1,8 @@
+import { randomUUID } from 'node:crypto';
 import { IHasher } from '@shared/domain/crypto';
-import { Signin } from '@auth/application/usecases';
-import { IUserRepository } from '@users/domain/repositories';
-import { randomUUID } from 'crypto';
 import { BadRequestError } from '@shared/domain/errors';
+import { Signin } from '@auth/application/usecases';
+import { IUserFacade } from '@users/infra/facades';
 
 describe('Signin.UseCase unit tests', () => {
   const id = randomUUID();
@@ -18,29 +18,29 @@ describe('Signin.UseCase unit tests', () => {
   };
 
   let sut: Signin.UseCase;
-  let mockedUserRepo: IUserRepository;
+  let mockedUserFacade: IUserFacade;
   let mockedHasher: IHasher;
 
   beforeEach(() => {
-    mockedUserRepo = {
+    mockedUserFacade = {
       findByEmail: jest.fn().mockResolvedValue(mockedOutput),
-    } as any as IUserRepository;
+    } as any as IUserFacade;
     mockedHasher = {
       compare: jest.fn().mockResolvedValue(true),
     } as any as IHasher;
-    sut = new Signin.UseCase(mockedUserRepo, mockedHasher);
+    sut = new Signin.UseCase(mockedUserFacade, mockedHasher);
   });
 
   it('should sign-in correctly', async () => {
     const result = await sut.execute(mockedInput);
 
     expect(result).toStrictEqual(mockedOutput);
-    expect(mockedUserRepo.findByEmail).toHaveBeenCalledTimes(1);
+    expect(mockedUserFacade.findByEmail).toHaveBeenCalledTimes(1);
     expect(mockedHasher.compare).toHaveBeenCalledTimes(1);
   });
 
   it('should throw a BadRequestError if there is no user with given email', async () => {
-    jest.spyOn(mockedUserRepo, 'findByEmail').mockResolvedValueOnce(null);
+    jest.spyOn(mockedUserFacade, 'findByEmail').mockResolvedValueOnce(null);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(
       new BadRequestError('E-mail and/or Password is wrong'),
@@ -55,8 +55,8 @@ describe('Signin.UseCase unit tests', () => {
     );
   });
 
-  it('should throw if mockedUserRepo.findByEmail throws', async () => {
-    jest.spyOn(mockedUserRepo, 'findByEmail').mockImplementationOnce(() => {
+  it('should throw if mockedUserFacade.findByEmail throws', async () => {
+    jest.spyOn(mockedUserFacade, 'findByEmail').mockImplementationOnce(() => {
       throw new Error('');
     });
 

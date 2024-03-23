@@ -7,18 +7,15 @@ import {
   GenerateSigninToken,
   Signin,
 } from '@auth/application/usecases';
-import { IUserRepository } from '@users/domain/repositories';
-import { userRepositoryFactory } from '@users/infra/data/repositories';
 import { IUserFacade, UserFacadeFactory } from '@users/infra/facades';
 
 export class AuthUseCasesFactory {
-  public static readonly userRepo: IUserRepository = userRepositoryFactory();
   public static readonly hasher: IHasher = hasherFactory();
   public static readonly jsonWebToken: IJsonWebToken = JwtFactory.create();
   public static readonly userFacade: IUserFacade = UserFacadeFactory.create();
 
   public static signin(): DefaultUseCase {
-    return new Signin.UseCase(this.userRepo, this.hasher);
+    return new Signin.UseCase(this.userFacade, this.hasher);
   }
 
   public static generateSigninToken(): DefaultUseCase {

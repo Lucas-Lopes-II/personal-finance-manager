@@ -7,4 +7,5 @@ export interface FindUserByEmailOutput {
   name: string;
   email: string;
   isAdmin: boolean;
+  password: string;
 }

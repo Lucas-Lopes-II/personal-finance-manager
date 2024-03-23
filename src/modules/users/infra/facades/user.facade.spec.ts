@@ -37,6 +37,7 @@ describe('UserFacade unit tests', () => {
     name: 'test',
     email: 'email@email.com',
     isAdmin: true,
+    password: 'dsfdsfdsgdfhgfh',
   };
 
   beforeEach(() => {
