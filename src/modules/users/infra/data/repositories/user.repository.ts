@@ -1,25 +1,13 @@
 import { DataSource, Equal, Repository } from 'typeorm';
-import { DatabaseUtils } from '@shared/infra/database';
 import { IUserRepository } from '@users/domain/repositories';
 import { UserEntity } from '@users/infra/data/entities/user.entity';
 import { IUser, UserFactory, UserProps } from '@users/domain/entities';
 
-export class UserRepository
-  extends DatabaseUtils<UserProps>
-  implements IUserRepository
-{
+export class UserRepository implements IUserRepository {
   public static instance: UserRepository | null = null;
   public userRepo: Repository<UserEntity>;
-  protected allowedFields: (keyof UserProps)[] = [
-    'id',
-    'name',
-    'email',
-    'isAdmin',
-    'password',
-  ];
 
   private constructor(protected readonly dataSource: DataSource) {
-    super();
     this.userRepo = dataSource.getRepository(UserEntity);
   }
 
