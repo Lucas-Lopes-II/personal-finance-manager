@@ -1,12 +1,17 @@
+import {
+  UserFacadeDependencies,
+  IUserFacade,
+  UserFacade,
+} from '@users/infra/facades';
 import { UserUseCasesFactory } from '@users/application/usecases';
-import { UserFacadeDeps, IUserFacade, UserFacade } from '@users/infra/facades';
 
 export class UserFacadeFactory {
   public static create(): IUserFacade {
-    const deps: UserFacadeDeps = {
+    const dependencies: UserFacadeDependencies = {
       findByIdUsecase: UserUseCasesFactory.findUserById(),
+      becomeAdminUsecase: UserUseCasesFactory.becomeAdmin(),
     };
 
-    return new UserFacade(deps);
+    return new UserFacade(dependencies);
   }
 }
