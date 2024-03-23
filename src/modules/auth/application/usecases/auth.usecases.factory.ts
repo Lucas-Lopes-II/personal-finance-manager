@@ -1,3 +1,7 @@
+import { IHasher } from '@shared/domain/crypto';
+import { DefaultUseCase } from '@shared/application/usecases';
+import { hasherFactory } from '@shared/infra/crypto/hasher';
+import { IJsonWebToken, JwtFactory } from '@shared/infra/jwt';
 import {
   BecomeAdminUser,
   GenerateSigninToken,
@@ -5,15 +9,13 @@ import {
 } from '@auth/application/usecases';
 import { IUserRepository } from '@users/domain/repositories';
 import { userRepositoryFactory } from '@users/infra/data/repositories';
-import { IHasher } from '@shared/domain/crypto';
-import { DefaultUseCase } from '@shared/application/usecases';
-import { hasherFactory } from '@shared/infra/crypto/hasher';
-import { IJsonWebToken, JwtFactory } from '@shared/infra/jwt';
+import { IUserFacade, UserFacadeFactory } from '@users/infra/facades';
 
 export class AuthUseCasesFactory {
   public static readonly userRepo: IUserRepository = userRepositoryFactory();
   public static readonly hasher: IHasher = hasherFactory();
   public static readonly jsonWebToken: IJsonWebToken = JwtFactory.create();
+  public static readonly userFacade: IUserFacade = UserFacadeFactory.create();
 
   public static signin(): DefaultUseCase {
     return new Signin.UseCase(this.userRepo, this.hasher);
@@ -24,6 +26,6 @@ export class AuthUseCasesFactory {
   }
 
   public static becomeAdminUser(): DefaultUseCase {
-    return new BecomeAdminUser.UseCase(this.userRepo);
+    return new BecomeAdminUser.UseCase(this.userFacade);
   }
 }

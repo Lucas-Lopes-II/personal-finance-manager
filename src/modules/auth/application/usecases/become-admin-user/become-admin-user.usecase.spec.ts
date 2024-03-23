@@ -1,8 +1,7 @@
-import { BadRequestError } from '@shared/domain/errors';
+import { randomUUID } from 'node:crypto';
+import { IUserFacade } from '@users/infra/facades';
 import { UserFactory } from '@users/domain/entities';
-import { randomUUID } from 'crypto';
 import { BecomeAdminUser } from './become-admin-user.usecase';
-import { IUserRepository } from '@users/domain/repositories';
 
 describe('BecomeAdminUser.UseCase unit tests', () => {
   const mockedInput: BecomeAdminUser.Input = {
@@ -14,14 +13,7 @@ describe('BecomeAdminUser.UseCase unit tests', () => {
     name: 'Name 1',
     email: 'email1@test.com',
   };
-  const userAdmin = UserFactory.create({
-    id: mockedInput.actionDoneBy,
-    name: 'Name',
-    email: 'email@test.com',
-    isAdmin: true,
-    password: 'Test@123',
-  });
-  const updateUser = UserFactory.create({
+  const updatedUser = UserFactory.create({
     id: mockedInput.userId,
     name: 'Name 1',
     email: 'email1@test.com',
@@ -30,47 +22,24 @@ describe('BecomeAdminUser.UseCase unit tests', () => {
   });
 
   let sut: BecomeAdminUser.UseCase;
-  let mockedUserRepo: IUserRepository;
+  let mockedUserFacade: IUserFacade;
 
   beforeEach(() => {
-    mockedUserRepo = {
-      findById: jest.fn().mockResolvedValue(userAdmin),
-      update: jest.fn().mockResolvedValue(updateUser),
-    } as any as IUserRepository;
-    sut = new BecomeAdminUser.UseCase(mockedUserRepo);
+    mockedUserFacade = {
+      becomeAdmin: jest.fn().mockResolvedValue(updatedUser),
+    } as any as IUserFacade;
+    sut = new BecomeAdminUser.UseCase(mockedUserFacade);
   });
 
   it('should become admin user correctly', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(userAdmin);
-    jest
-      .spyOn(mockedUserRepo, 'findById')
-      .mockResolvedValueOnce(updateUser.toJSON());
     const result = await sut.execute(mockedInput);
 
     expect(result).toStrictEqual(mockedOutput);
-    expect(mockedUserRepo.findById).toHaveBeenCalledTimes(2);
-    expect(mockedUserRepo.update).toHaveBeenCalledTimes(1);
+    expect(mockedUserFacade.becomeAdmin).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw a BadRequestError if user with given userId not exists', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(userAdmin);
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(null);
-
-    expect(sut.execute(mockedInput)).rejects.toThrow(
-      new BadRequestError('user do not exists'),
-    );
-  });
-
-  it('should throw if mockedUserRepo.findById throws', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockImplementationOnce(() => {
-      throw new Error('');
-    });
-
-    expect(sut.execute(mockedInput)).rejects.toThrow();
-  });
-
-  it('should throw if  mockedUserRepo.update throws', async () => {
-    jest.spyOn(mockedUserRepo, 'update').mockImplementationOnce(() => {
+  it('should throw if  mockedUserRepo.becomeAdmin throws', async () => {
+    jest.spyOn(mockedUserFacade, 'becomeAdmin').mockImplementationOnce(() => {
       throw new Error('');
     });
 
