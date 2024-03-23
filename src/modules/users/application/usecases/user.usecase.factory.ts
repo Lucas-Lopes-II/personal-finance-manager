@@ -8,6 +8,7 @@ import {
   BecomeAdmin,
   CreateUser,
   FindUserById,
+  FindUserByEmail,
 } from '@users/application/usecases';
 import { IUserRepository } from '@users/domain/repositories';
 import { userRepositoryFactory } from '@users/infra/data/repositories';
@@ -28,5 +29,9 @@ export class UserUseCasesFactory {
 
   public static becomeAdmin(): BecomeAdmin.UseCase {
     return new BecomeAdmin.UseCase(this.repo);
+  }
+
+  public static findUserByEmail(): FindUserByEmail.UseCase {
+    return new FindUserByEmail.UseCase(this.getway);
   }
 }
