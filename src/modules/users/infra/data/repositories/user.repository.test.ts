@@ -53,31 +53,19 @@ describe('UserRepository integration tests', () => {
     });
   });
 
-  describe('findById', () => {
-    it(`should find an user by id`, async () => {
+  describe('find', () => {
+    it(`should find an user`, async () => {
       await sut.create(input);
-      const result = await sut.findById(data.id);
+      const result = await sut.find(data.id);
 
       expect(result.id).toStrictEqual(id);
       expect(result.name).toStrictEqual('Name');
       expect(result.email).toStrictEqual('email@example.com');
     });
-
-    it(`should find an user by id with select fields`, async () => {
-      await sut.create(input);
-      const result = await sut.findById(data.id, ['name', 'email']);
-
-      expect(result).toEqual({
-        name: 'Name',
-        email: 'email@example.com',
-      });
-      expect(result.id).toBeUndefined();
-      expect(result.password).toBeUndefined();
-    });
   });
 
   describe('update', () => {
-    it(`should create an user`, async () => {
+    it(`should update an user`, async () => {
       await sut.create(input);
 
       const result = await sut.update(input.id, {

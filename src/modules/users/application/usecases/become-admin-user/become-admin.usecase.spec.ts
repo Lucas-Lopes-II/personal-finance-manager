@@ -35,35 +35,33 @@ describe('BecomeAdmin.UseCase unit tests', () => {
 
   beforeEach(() => {
     mockedUserRepo = {
-      findById: jest.fn().mockResolvedValue(userAdmin),
+      find: jest.fn().mockResolvedValue(userAdmin),
       update: jest.fn().mockResolvedValue(updateUser),
     } as any as IUserRepository;
     sut = new BecomeAdmin.UseCase(mockedUserRepo);
   });
 
   it('should become admin user correctly', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(userAdmin);
-    jest
-      .spyOn(mockedUserRepo, 'findById')
-      .mockResolvedValueOnce(updateUser.toJSON());
+    jest.spyOn(mockedUserRepo, 'find').mockResolvedValueOnce(userAdmin);
+    jest.spyOn(mockedUserRepo, 'find').mockResolvedValueOnce(updateUser);
     const result = await sut.execute(mockedInput);
 
     expect(result).toStrictEqual(mockedOutput);
-    expect(mockedUserRepo.findById).toHaveBeenCalledTimes(2);
+    expect(mockedUserRepo.find).toHaveBeenCalledTimes(2);
     expect(mockedUserRepo.update).toHaveBeenCalledTimes(1);
   });
 
   it('should throw a BadRequestError if user with given userId not exists', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(userAdmin);
-    jest.spyOn(mockedUserRepo, 'findById').mockResolvedValueOnce(null);
+    jest.spyOn(mockedUserRepo, 'find').mockResolvedValueOnce(userAdmin);
+    jest.spyOn(mockedUserRepo, 'find').mockResolvedValueOnce(null);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(
       new BadRequestError('user do not exists'),
     );
   });
 
-  it('should throw if mockedUserRepo.findById throws', async () => {
-    jest.spyOn(mockedUserRepo, 'findById').mockImplementationOnce(() => {
+  it('should throw if mockedUserRepo.find throws', async () => {
+    jest.spyOn(mockedUserRepo, 'find').mockImplementationOnce(() => {
       throw new Error('');
     });
 

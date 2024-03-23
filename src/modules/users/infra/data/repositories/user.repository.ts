@@ -1,8 +1,8 @@
+import { DataSource, Equal, Repository } from 'typeorm';
+import { DatabaseUtils } from '@shared/infra/database';
+import { IUserRepository } from '@users/domain/repositories';
 import { UserEntity } from '@users/infra/data/entities/user.entity';
 import { IUser, UserFactory, UserProps } from '@users/domain/entities';
-import { IUserRepository } from '@users/domain/repositories';
-import { DataSource, Repository } from 'typeorm';
-import { DatabaseUtils } from '@shared/infra/database';
 
 export class UserRepository
   extends DatabaseUtils<UserProps>
@@ -38,16 +38,16 @@ export class UserRepository
     return UserFactory.create(savedEntity);
   }
 
-  public findById(
-    id: string,
-    fields: (keyof UserProps)[] = [],
-  ): Promise<UserProps | Partial<UserProps>> {
-    const select = this.createSelectByFields(fields);
-
-    return this.userRepo.findOne({
-      select,
-      where: { id: id },
+  public async find(id: string): Promise<IUser> {
+    const data = await this.userRepo.findOne({
+      where: { id: Equal(id) },
     });
+
+    if (!data) {
+      return null;
+    }
+
+    return UserFactory.create(data);
   }
 
   public async update(id: string, data: Partial<UserProps>): Promise<IUser> {
