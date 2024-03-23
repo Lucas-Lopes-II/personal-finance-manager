@@ -42,4 +42,16 @@ export class UserDataGetway
       where: { id: Equal(id) },
     });
   }
+
+  public findByEmail(
+    email: string,
+    fields: (keyof UserProps)[] = [],
+  ): Promise<UserProps | Partial<UserProps>> {
+    const select = this.createSelectByFields(fields);
+
+    return this.userRepo.findOne({
+      select,
+      where: { email: email.toLowerCase() },
+    });
+  }
 }
