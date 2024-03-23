@@ -4,8 +4,13 @@ import {
   IUserFacade,
   UserFacade,
   UserFacadeDependencies,
+  FindUserByEmailOutput,
 } from '@users/infra/facades';
-import { BecomeAdmin, FindUserById } from '@users/application/usecases';
+import {
+  BecomeAdmin,
+  FindUserByEmail,
+  FindUserById,
+} from '@users/application/usecases';
 import { randomUUID } from 'node:crypto';
 
 describe('UserFacade unit tests', () => {
@@ -13,6 +18,7 @@ describe('UserFacade unit tests', () => {
   let deps: UserFacadeDependencies;
   let findByIdUsecase: FindUserById.UseCase;
   let becomeAdminUsecase: BecomeAdmin.UseCase;
+  let findByEmailUsecase: FindUserByEmail.UseCase;
 
   const findUserByIdoutput: FindUserByIdOutput = {
     id: randomUUID(),
@@ -26,6 +32,12 @@ describe('UserFacade unit tests', () => {
     email: 'email@email.com',
     isAdmin: true,
   };
+  const findUserByEmailoutput: FindUserByEmailOutput = {
+    id: randomUUID(),
+    name: 'test',
+    email: 'email@email.com',
+    isAdmin: true,
+  };
 
   beforeEach(() => {
     findByIdUsecase = {
@@ -34,9 +46,13 @@ describe('UserFacade unit tests', () => {
     becomeAdminUsecase = {
       execute: jest.fn().mockResolvedValue(becomeAdminOutput),
     } as any as BecomeAdmin.UseCase;
+    findByEmailUsecase = {
+      execute: jest.fn().mockResolvedValue(findUserByEmailoutput),
+    } as any as FindUserByEmail.UseCase;
     deps = {
       findByIdUsecase,
       becomeAdminUsecase,
+      findByEmailUsecase,
     };
     sut = new UserFacade(deps);
   });
@@ -81,6 +97,27 @@ describe('UserFacade unit tests', () => {
           userId: becomeAdminOutput.id,
           actionDoneBy: randomUUID(),
         }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('findByEmail', () => {
+    it('sholud find an user by eamil', async () => {
+      const result = await sut.findByEmail({
+        email: findUserByEmailoutput.email,
+      });
+
+      expect(result).toStrictEqual(findUserByEmailoutput);
+      expect(findByEmailUsecase.execute).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw if findByEmailUsecase.execute throws', async () => {
+      jest.spyOn(findByEmailUsecase, 'execute').mockImplementationOnce(() => {
+        throw new Error('');
+      });
+
+      await expect(
+        sut.findByEmail({ email: findUserByEmailoutput.email }),
       ).rejects.toThrow();
     });
   });
