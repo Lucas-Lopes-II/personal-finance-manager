@@ -25,16 +25,16 @@ export namespace BecomeAdmin {
         throw new BadRequestError('user do not exists');
       }
 
-      const updatedUser = await this.userRepository.update(userId, {
-        isAdmin: true,
+      user.becomeAdmin(adminUser);
+      await this.userRepository.update(user.id, {
+        isAdmin: user.isAdmin,
       });
-      updatedUser.becomeAdmin(adminUser);
 
       return {
-        id: updatedUser.id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        isAdmin: updatedUser.isAdmin,
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
       };
     }
   }

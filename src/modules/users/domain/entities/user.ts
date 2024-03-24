@@ -67,7 +67,7 @@ class User implements IUser {
   }
 
   public becomeAdmin(actionDoneBy: IUser): void {
-    if (!actionDoneBy.isAdmin) {
+    if (!actionDoneBy?.isAdmin) {
       throw new ForbiddenError('Action not allowed');
     }
 
