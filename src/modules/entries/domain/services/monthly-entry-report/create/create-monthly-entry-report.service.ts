@@ -58,7 +58,7 @@ export class CreateMothlyEntryReportService {
       month: data.month,
       year: data.year,
     });
-    await this.mothlyEntryReportRepo.create(mothlyEntryReport.toJSON());
+    await this.mothlyEntryReportRepo.create(mothlyEntryReport);
 
     return mothlyEntryReport;
   }

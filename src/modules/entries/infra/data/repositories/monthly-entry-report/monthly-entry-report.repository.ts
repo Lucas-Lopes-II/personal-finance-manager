@@ -1,5 +1,5 @@
 import { DataSource, Repository } from 'typeorm';
-import { MonthlyEntryReportProps } from '@entries/domain/entities';
+import { IMonthlyEntryReport } from '@entries/domain/entities';
 import { MonthlyEntryReportEntity } from '@entries/infra/data/entities';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 
@@ -27,8 +27,8 @@ export class MonthlyEntryReportRepository
     return this.instance;
   }
 
-  public async create(data: MonthlyEntryReportProps): Promise<void> {
-    const createdEntity = this.monthlyEntryReportRepo.create(data);
+  public async create(data: IMonthlyEntryReport): Promise<void> {
+    const createdEntity = this.monthlyEntryReportRepo.create(data.toJSON());
 
     await this.monthlyEntryReportRepo.save(createdEntity);
   }

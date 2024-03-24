@@ -3,7 +3,10 @@ import { Repository } from 'typeorm';
 import { Month } from '@shared/domain/enums';
 import { dataSource } from '@shared/infra/database';
 import { UserEntity } from '@users/infra/data/entities';
-import { MonthlyEntryReportProps } from '@entries/domain/entities';
+import {
+  MonthlyEntryReportFactory,
+  MonthlyEntryReportProps,
+} from '@entries/domain/entities';
 import { MonthlyEntryReportEntity } from '@entries/infra/data/entities';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { MonthlyEntryReportRepository } from '@entries/infra/data/repositories';
@@ -73,8 +76,9 @@ describe('MonthlyEntryReportRepository integration tests', () => {
           users: [userData.id],
         }),
       );
+      const monthlyEntryReport = MonthlyEntryReportFactory.create(data);
 
-      await expect(sut.create(data)).resolves.not.toThrow();
+      await expect(sut.create(monthlyEntryReport)).resolves.not.toThrow();
     });
   });
 });
