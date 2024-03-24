@@ -2,7 +2,7 @@ import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 import { FinanceAccountFactory } from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 
-export type AddUserInFinanceAccountServiceDto = {
+export type AddUserInFinanceAccountDto = {
   accountId: string;
   userId: string;
   actionDoneBy: string;
@@ -13,7 +13,7 @@ export class AddUserInFinanceAccountService {
     private readonly financeAccountRepository: IFinanceAccountRepository,
   ) {}
 
-  public async add(data: AddUserInFinanceAccountServiceDto): Promise<void> {
+  public async add(data: AddUserInFinanceAccountDto): Promise<void> {
     const financeAccountToAddNewUser = await this.financeAccountRepository.find(
       data.accountId,
     );

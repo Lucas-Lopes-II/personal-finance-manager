@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 import {
   AddUserInFinanceAccountService,
-  AddUserInFinanceAccountServiceDto,
+  AddUserInFinanceAccountDto,
 } from '@finance-accounts/domain/services';
 import {
   FinanceAccountFactory,
@@ -11,7 +11,7 @@ import {
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 
 describe('AddUserInFinanceAccountService unit tests', () => {
-  const mockedInput: AddUserInFinanceAccountServiceDto = {
+  const mockedInput: AddUserInFinanceAccountDto = {
     userId: randomUUID(),
     accountId: randomUUID(),
     actionDoneBy: randomUUID(),

@@ -1,9 +1,9 @@
+import { BadRequestError } from '@shared/domain/errors';
 import { Validation } from '@shared/domain/validations';
 import { DefaultUseCase } from '@shared/application/usecases';
-import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 import { IUserFacade } from '@users/infra/facades';
-import { FinanceAccountFactory } from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
+import { AddUserInFinanceAccountService } from '@finance-accounts/domain/services';
 
 export namespace AddUserInFinanceAccount {
   export type Input = {
@@ -23,33 +23,22 @@ export namespace AddUserInFinanceAccount {
 
     public async execute(input: Input): Promise<Output> {
       this.validator.validate(input);
-      const { accountId, actionDoneBy, userId } = input;
       const newUserToAddExists = await this.userFacade.findById({
-        id: userId,
+        id: input.userId,
         selectedfields: ['id'],
       });
       if (!newUserToAddExists) {
         throw new BadRequestError('User do not exists');
       }
 
-      const financeAccountToAddNewUser =
-        await this.financeAccountRepository.find(accountId);
-      if (!financeAccountToAddNewUser) {
-        throw new BadRequestError('Finance account do not exists');
-      }
-
-      const financeAccount = FinanceAccountFactory.create(
-        financeAccountToAddNewUser,
+      const addUserInFinanceAccountService = new AddUserInFinanceAccountService(
+        this.financeAccountRepository,
       );
-
-      const userAddingNewUserDoNotBelongToAccount =
-        !financeAccount.checkIfUserIsAlreadyAdded(actionDoneBy);
-      if (userAddingNewUserDoNotBelongToAccount) {
-        throw new ForbiddenError('Action not allowed');
-      }
-
-      financeAccount.addUser(userId);
-      await this.financeAccountRepository.addUserInAccount(financeAccount);
+      await addUserInFinanceAccountService.add({
+        accountId: input.accountId,
+        userId: input.userId,
+        actionDoneBy: input.actionDoneBy,
+      });
     }
   }
 }
