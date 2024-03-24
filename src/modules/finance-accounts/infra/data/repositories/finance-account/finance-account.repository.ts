@@ -1,29 +1,22 @@
 import { randomUUID } from 'node:crypto';
 import { DataSource, Repository } from 'typeorm';
 import {
+  IFinanceAccount,
+  FinanceAccountProps,
+  FinanceAccountFactory,
+} from '@finance-accounts/domain/entities';
+import {
   FinanceAccountEntity,
   FinanceAccountUserEntity,
 } from '@finance-accounts/infra/data/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
-import { FinanceAccountProps } from '@finance-accounts/domain/entities';
-import { DatabaseUtils } from '@shared/infra/database';
 
-export class FinanceAccountRepository
-  extends DatabaseUtils<FinanceAccountProps>
-  implements IFinanceAccountRepository
-{
+export class FinanceAccountRepository implements IFinanceAccountRepository {
   public static instance: FinanceAccountRepository | null = null;
   private financeAccountRepo: Repository<FinanceAccountEntity>;
   private financeAccountUserRepo: Repository<FinanceAccountUserEntity>;
-  protected allowedFields: (keyof FinanceAccountProps)[] = [
-    'id',
-    'name',
-    'date',
-    'users',
-  ];
 
   private constructor(protected readonly dataSource: DataSource) {
-    super();
     this.financeAccountRepo = dataSource.getRepository(FinanceAccountEntity);
     this.financeAccountUserRepo = dataSource.getRepository(
       FinanceAccountUserEntity,
@@ -42,21 +35,21 @@ export class FinanceAccountRepository
     return this.instance;
   }
 
-  public async create(data: FinanceAccountProps): Promise<void> {
+  public async create(data: IFinanceAccount): Promise<void> {
     const finaceAccountUser = data.users.map((userId) => ({
       id: randomUUID(),
       user: userId,
       financeAccount: data.id,
     }));
     const createdEntity = this.financeAccountRepo.create({
-      ...data,
+      ...data.toJSON(),
       finaceAccountUser,
     });
 
     await this.financeAccountRepo.save(createdEntity);
   }
 
-  public async addUserInAccount(data: FinanceAccountProps): Promise<void> {
+  public async addUserInAccount(data: IFinanceAccount): Promise<void> {
     const finaceAccountUserList = await this.financeAccountUserRepo
       .createQueryBuilder('financeAccountUser')
       .leftJoinAndSelect('financeAccountUser.financeAccount', 'financeAccount')
@@ -83,18 +76,9 @@ export class FinanceAccountRepository
     await this.financeAccountUserRepo.save(createdFinaceAccountUsers);
   }
 
-  public async findById(
-    id: string,
-    fields: (keyof FinanceAccountProps)[] = [],
-  ): Promise<FinanceAccountProps | Partial<FinanceAccountProps>> {
-    const select = this.createQueryBuilderSelectByFields(
-      'financeAccount',
-      fields,
-    );
-
+  public async find(id: string): Promise<IFinanceAccount> {
     const financeAccount = await this.financeAccountRepo
       .createQueryBuilder('financeAccount')
-      .select(select)
       .leftJoinAndSelect(
         'financeAccount.finaceAccountUser',
         'finaceAccountUser',
@@ -108,44 +92,13 @@ export class FinanceAccountRepository
 
     if (!financeAccount) return;
 
-    return {
+    const props: FinanceAccountProps = {
       id: financeAccount.id,
       name: financeAccount.name,
       date: financeAccount.date,
       users: financeAccount.finaceAccountUser.map((item) => item.user?.['id']),
     };
-  }
 
-  public async findByUserId(
-    userId: string,
-    fields: (keyof FinanceAccountProps)[] = [],
-  ): Promise<FinanceAccountProps[] | Partial<FinanceAccountProps>[]> {
-    const select = this.createQueryBuilderSelectByFields(
-      'financeAccount',
-      fields,
-    );
-
-    // const financeAccounts = await this.financeAccountRepo.find();
-    const financeAccounts = await this.financeAccountRepo
-      .createQueryBuilder('financeAccount')
-      .select(select)
-      .innerJoinAndSelect(
-        'financeAccount.finaceAccountUser',
-        'finaceAccountUser',
-      )
-      .innerJoinAndSelect('finaceAccountUser.user', 'user')
-      .where('user.id = :userId', {
-        userId,
-      })
-      .addSelect(['finaceAccountUser.user'])
-      .addSelect(['user.id'])
-      .getMany();
-
-    return financeAccounts.map((financeAccount) => ({
-      id: financeAccount.id,
-      name: financeAccount.name,
-      date: financeAccount.date,
-      users: financeAccount.finaceAccountUser.map((item) => item.user?.['id']),
-    }));
+    return FinanceAccountFactory.create(props);
   }
 }

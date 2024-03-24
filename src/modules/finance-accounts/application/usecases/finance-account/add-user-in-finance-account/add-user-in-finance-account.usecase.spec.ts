@@ -31,7 +31,7 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
 
   beforeEach(() => {
     mockedFinanceAccountRepo = {
-      findById: jest.fn().mockResolvedValue(financeAccount.toJSON()),
+      find: jest.fn().mockResolvedValue(financeAccount),
       addUserInAccount: jest.fn().mockResolvedValue(undefined),
     } as any as IFinanceAccountRepository;
     mockedUserFacade = {
@@ -50,7 +50,7 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
   it('should add new user in FinanceAccount', async () => {
     await expect(sut.execute(mockedInput)).resolves.not.toThrow();
     expect(mockedUserFacade.findById).toHaveBeenCalledTimes(1);
-    expect(mockedFinanceAccountRepo.findById).toHaveBeenCalledTimes(1);
+    expect(mockedFinanceAccountRepo.find).toHaveBeenCalledTimes(1);
     expect(mockedFinanceAccountRepo.addUserInAccount).toHaveBeenCalledTimes(1);
   });
 
@@ -71,21 +71,17 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
   });
 
   it('should throw a BadRequestError if there is no financeAccount with given accountId', async () => {
-    jest
-      .spyOn(mockedFinanceAccountRepo, 'findById')
-      .mockResolvedValueOnce(null);
+    jest.spyOn(mockedFinanceAccountRepo, 'find').mockResolvedValueOnce(null);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(
       new BadRequestError('Finance account do not exists'),
     );
   });
 
-  it('should throw if financeAccountRepo.findById throws', async () => {
-    jest
-      .spyOn(mockedFinanceAccountRepo, 'findById')
-      .mockImplementationOnce(() => {
-        throw new Error('');
-      });
+  it('should throw if financeAccountRepo.find throws', async () => {
+    jest.spyOn(mockedFinanceAccountRepo, 'find').mockImplementationOnce(() => {
+      throw new Error('');
+    });
 
     expect(sut.execute(mockedInput)).rejects.toThrow();
   });
@@ -99,7 +95,7 @@ describe('AddUserInFinanceAccount.UseCase unit tests', () => {
     };
     const financeAccount = FinanceAccountFactory.create(stubFinanceAccountData);
     jest
-      .spyOn(mockedFinanceAccountRepo, 'findById')
+      .spyOn(mockedFinanceAccountRepo, 'find')
       .mockResolvedValueOnce(financeAccount);
 
     expect(sut.execute(mockedInput)).rejects.toThrow(

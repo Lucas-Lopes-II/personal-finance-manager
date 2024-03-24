@@ -70,7 +70,7 @@ describe('FinanceAccountDataGetway integration tests', () => {
         ...data,
         users: [userData.id],
       });
-      await financeAccountRepo.create(input.toJSON());
+      await financeAccountRepo.create(input);
 
       const result = await sut.findById(input.toJSON().id);
 
@@ -85,7 +85,7 @@ describe('FinanceAccountDataGetway integration tests', () => {
         ...data,
         users: [userData.id],
       });
-      await financeAccountRepo.create(input.toJSON());
+      await financeAccountRepo.create(input);
 
       const result = await sut.findById(input.toJSON().id, ['id', 'name']);
 
@@ -114,9 +114,15 @@ describe('FinanceAccountDataGetway integration tests', () => {
         users: [userData.id],
       });
       await Promise.all([
-        financeAccountRepo.create({ ...input.toJSON(), id: randomUUID() }),
-        financeAccountRepo.create({ ...input.toJSON(), id: randomUUID() }),
-        financeAccountRepo.create({ ...input.toJSON(), id: randomUUID() }),
+        financeAccountRepo.create(
+          FinanceAccountFactory.create({ ...input.toJSON(), id: randomUUID() }),
+        ),
+        financeAccountRepo.create(
+          FinanceAccountFactory.create({ ...input.toJSON(), id: randomUUID() }),
+        ),
+        financeAccountRepo.create(
+          FinanceAccountFactory.create({ ...input.toJSON(), id: randomUUID() }),
+        ),
       ]);
     });
 

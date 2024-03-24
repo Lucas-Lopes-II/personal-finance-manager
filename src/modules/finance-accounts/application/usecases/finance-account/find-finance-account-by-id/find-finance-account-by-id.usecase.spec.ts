@@ -1,4 +1,3 @@
-import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { randomUUID } from 'crypto';
 import { FindFinanceAccountById } from '@finance-accounts/application/usecases';
 import { IFinanceAccountDataGetway } from '@finance-accounts/infra/data/getways';
@@ -21,7 +20,7 @@ describe('FindFinanceAccountById.UseCase unit tests', () => {
   beforeEach(() => {
     mockedFinanceAccountDataGetway = {
       findById: jest.fn().mockResolvedValue(mockedOutut),
-    } as any as IFinanceAccountRepository;
+    } as any as IFinanceAccountDataGetway;
     sut = new FindFinanceAccountById.UseCase(mockedFinanceAccountDataGetway);
   });
 

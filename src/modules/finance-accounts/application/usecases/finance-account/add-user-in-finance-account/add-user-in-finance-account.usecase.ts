@@ -2,10 +2,7 @@ import { Validation } from '@shared/domain/validations';
 import { DefaultUseCase } from '@shared/application/usecases';
 import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 import { IUserFacade } from '@users/infra/facades';
-import {
-  FinanceAccountFactory,
-  FinanceAccountProps,
-} from '@finance-accounts/domain/entities';
+import { FinanceAccountFactory } from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 
 export namespace AddUserInFinanceAccount {
@@ -36,13 +33,13 @@ export namespace AddUserInFinanceAccount {
       }
 
       const financeAccountToAddNewUser =
-        await this.financeAccountRepository.findById(accountId);
+        await this.financeAccountRepository.find(accountId);
       if (!financeAccountToAddNewUser) {
         throw new BadRequestError('Finance account do not exists');
       }
 
       const financeAccount = FinanceAccountFactory.create(
-        financeAccountToAddNewUser as FinanceAccountProps,
+        financeAccountToAddNewUser,
       );
 
       const userAddingNewUserDoNotBelongToAccount =
@@ -52,9 +49,7 @@ export namespace AddUserInFinanceAccount {
       }
 
       financeAccount.addUser(userId);
-      await this.financeAccountRepository.addUserInAccount(
-        financeAccount.toJSON(),
-      );
+      await this.financeAccountRepository.addUserInAccount(financeAccount);
     }
   }
 }

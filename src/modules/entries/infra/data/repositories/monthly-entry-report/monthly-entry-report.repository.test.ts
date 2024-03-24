@@ -2,18 +2,29 @@ import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { Month } from '@shared/domain/enums';
 import { dataSource } from '@shared/infra/database';
+import { UserEntity } from '@users/infra/data/entities';
 import { MonthlyEntryReportProps } from '@entries/domain/entities';
 import { MonthlyEntryReportEntity } from '@entries/infra/data/entities';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { MonthlyEntryReportRepository } from '@entries/infra/data/repositories';
-import { FinanceAccountProps } from '@finance-accounts/domain/entities';
+import {
+  FinanceAccountFactory,
+  FinanceAccountProps,
+} from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
 
 describe('MonthlyEntryReportRepository integration tests', () => {
   let sut: IMonthlyEntryReportRepository;
   let financeAccountRepo: IFinanceAccountRepository;
+  let userRepo: Repository<UserEntity>;
   let monthlyEntryRepo: Repository<MonthlyEntryReportEntity>;
+  const userData = {
+    id: randomUUID(),
+    name: 'Name',
+    email: 'email@example.com',
+    password: 'Test@123',
+  };
   const financeAccountData: FinanceAccountProps = {
     id: randomUUID(),
     name: 'Name',
@@ -32,6 +43,7 @@ describe('MonthlyEntryReportRepository integration tests', () => {
     try {
       await dataSource.initialize();
       sut = MonthlyEntryReportRepository.createInstance(dataSource);
+      userRepo = dataSource.getRepository(UserEntity);
       financeAccountRepo = FinanceAccountRepositoryFactory.create();
       monthlyEntryRepo = dataSource.getRepository(MonthlyEntryReportEntity);
     } catch (error) {
@@ -54,7 +66,13 @@ describe('MonthlyEntryReportRepository integration tests', () => {
 
   describe('create', () => {
     it(`should create a MonthlyEntryReport`, async () => {
-      await financeAccountRepo.create(financeAccountData);
+      await userRepo.save(userData);
+      await financeAccountRepo.create(
+        FinanceAccountFactory.create({
+          ...financeAccountData,
+          users: [userData.id],
+        }),
+      );
 
       await expect(sut.create(data)).resolves.not.toThrow();
     });

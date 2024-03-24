@@ -72,7 +72,7 @@ describe('FinanceAccountRepository integration tests', () => {
         users: [userData.id],
       });
 
-      await expect(sut.create(input.toJSON())).resolves.not.toThrow();
+      await expect(sut.create(input)).resolves.not.toThrow();
     });
   });
 
@@ -96,15 +96,10 @@ describe('FinanceAccountRepository integration tests', () => {
         ...data,
         users: [firstUser.id],
       });
-      await sut.create(financeAccount.toJSON());
+      await sut.create(financeAccount);
       financeAccount.addUser(secondUser.id);
 
-      await expect(
-        sut.addUserInAccount({
-          ...financeAccount.toJSON(),
-          users: [firstUser.id, secondUser.id],
-        }),
-      ).resolves.not.toThrow();
+      await expect(sut.addUserInAccount(financeAccount)).resolves.not.toThrow();
 
       const finaceAccountUserList = await financeAccountUserRepo.find({
         select: ['id'],
@@ -115,7 +110,7 @@ describe('FinanceAccountRepository integration tests', () => {
     });
   });
 
-  describe('findById', () => {
+  describe('find', () => {
     it(`should find a FinanceAccount by id`, async () => {
       const createdUser = userRepo.create(userInput);
       await userRepo.save(createdUser);
@@ -124,67 +119,17 @@ describe('FinanceAccountRepository integration tests', () => {
         ...data,
         users: [userData.id],
       });
-      await sut.create(input.toJSON());
+      await sut.create(input);
 
-      const result = await sut.findById(input.toJSON().id);
+      const result = await sut.find(input.toJSON().id);
 
-      expect(result).toStrictEqual(input.toJSON());
-    });
-
-    it(`should find a FinanceAccount by id with selected fields`, async () => {
-      const createdUser = userRepo.create(userInput);
-      await userRepo.save(createdUser);
-
-      const input = FinanceAccountFactory.create({
-        ...data,
-        users: [userData.id],
-      });
-      await sut.create(input.toJSON());
-
-      const result = await sut.findById(input.toJSON().id, ['id', 'name']);
-
-      expect(result).toStrictEqual({
-        id: data.id,
-        date: undefined,
-        name: data.name,
-        users: [userInput.id],
-      });
+      expect(result).toStrictEqual(input);
     });
 
     it(`should return undefined if do not find a FinanceAccount`, async () => {
-      const result = await sut.findById('any ID');
+      const result = await sut.find('any ID');
 
       expect(result).toBeUndefined();
-    });
-  });
-
-  describe('findByUserId', () => {
-    beforeEach(async () => {
-      const createdUser = userRepo.create(userInput);
-      await userRepo.save(createdUser);
-
-      const input = FinanceAccountFactory.create({
-        ...data,
-        users: [userData.id],
-      });
-      await sut.create({ ...input.toJSON(), id: randomUUID() });
-      await sut.create({ ...input.toJSON(), id: randomUUID() });
-      await sut.create({ ...input.toJSON(), id: randomUUID() });
-    });
-
-    it('should return financeAccounts of user', async () => {
-      const result = await sut.findByUserId(userData.id);
-
-      expect(result.length).toStrictEqual(3);
-    });
-
-    it('should return of financeAccounts of user with selected fields', async () => {
-      const result = await sut.findByUserId(userData.id, ['id']);
-
-      expect(result.length).toStrictEqual(3);
-      expect(result[0].id).toBeDefined();
-      expect(result[0].name).toBeUndefined();
-      expect(result[0].date).toBeUndefined();
     });
   });
 });

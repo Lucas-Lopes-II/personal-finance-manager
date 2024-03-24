@@ -8,14 +8,25 @@ import {
 } from '@entries/infra/data/getways';
 import { MonthlyEntryReportProps } from '@entries/domain/entities';
 import { MonthlyEntryReportEntity } from '@entries/infra/data/entities';
-import { FinanceAccountProps } from '@finance-accounts/domain/entities';
+import {
+  FinanceAccountFactory,
+  FinanceAccountProps,
+} from '@finance-accounts/domain/entities';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
+import { UserEntity } from '@users/infra/data/entities';
 
 describe('MonthlyEntryReportDataGetway integration tests', () => {
   let sut: IMonthlyEntryReportDataGetway;
   let financeAccountRepo: IFinanceAccountRepository;
+  let userRepo: Repository<UserEntity>;
   let monthlyEntryRepo: Repository<MonthlyEntryReportEntity>;
+  const userData = {
+    id: randomUUID(),
+    name: 'Name',
+    email: 'email@example.com',
+    password: 'Test@123',
+  };
   const financeAccountData: FinanceAccountProps = {
     id: randomUUID(),
     name: 'Name',
@@ -35,7 +46,15 @@ describe('MonthlyEntryReportDataGetway integration tests', () => {
       await dataSource.initialize();
       sut = MonthlyEntryReportDataGetway.createInstance(dataSource);
       financeAccountRepo = FinanceAccountRepositoryFactory.create();
+      userRepo = dataSource.getRepository(UserEntity);
       monthlyEntryRepo = dataSource.getRepository(MonthlyEntryReportEntity);
+      await userRepo.save(userData);
+      await financeAccountRepo.create(
+        FinanceAccountFactory.create({
+          ...financeAccountData,
+          users: [userData.id],
+        }),
+      );
     } catch (error) {
       console.log(error);
     }
@@ -56,7 +75,6 @@ describe('MonthlyEntryReportDataGetway integration tests', () => {
 
   describe('findByYearMonthAndAccount', () => {
     it(`should find a MonthlyEntryReport by year, month and account`, async () => {
-      await financeAccountRepo.create(financeAccountData);
       await monthlyEntryRepo.save(data);
       const result = await sut.findByYearMonthAndAccount(
         data.year,
@@ -72,7 +90,6 @@ describe('MonthlyEntryReportDataGetway integration tests', () => {
     });
 
     it(`should find a MonthlyEntryReport by year, month and account with selected fields`, async () => {
-      await financeAccountRepo.create(financeAccountData);
       await monthlyEntryRepo.save(data);
       const result = await sut.findByYearMonthAndAccount(
         data.year,

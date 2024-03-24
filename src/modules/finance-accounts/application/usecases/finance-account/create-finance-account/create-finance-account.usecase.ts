@@ -36,7 +36,7 @@ export namespace CreateFinanceAccount {
         throw new BadRequestError('user do not exists');
       }
 
-      await this.financeAccountRepository.create(financeAccount.toJSON());
+      await this.financeAccountRepository.create(financeAccount);
     }
   }
 }

@@ -1,13 +1,11 @@
-import {
-  IAddUserInAccount,
-  ICreate,
-  IFindById,
-  IFindByUserId,
-} from '@shared/infra/data-getways';
-import { FinanceAccountProps } from '@finance-accounts/domain/entities';
+import { ICreate, IFind } from '@shared/domain/repositories';
+import { IFinanceAccount } from '@finance-accounts/domain/entities';
 
-export interface IFinanceAccountRepository<T = FinanceAccountProps>
+export interface IFinanceAccountRepository<T = IFinanceAccount>
   extends ICreate<T, void>,
     IAddUserInAccount<T, void>,
-    IFindById<T>,
-    IFindByUserId<T> {}
+    IFind<string, T> {}
+
+interface IAddUserInAccount<D = unknown, T = unknown> {
+  addUserInAccount(data: D): Promise<T>;
+}
