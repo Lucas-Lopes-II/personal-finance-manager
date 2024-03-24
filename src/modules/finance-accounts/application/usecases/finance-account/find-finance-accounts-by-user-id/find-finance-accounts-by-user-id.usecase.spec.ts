@@ -1,8 +1,8 @@
-import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
-import { BadRequestError } from '@shared/domain/errors';
 import { randomUUID } from 'crypto';
-import { FindFinanceAccountsByUserId } from '@finance-accounts/application/usecases';
+import { BadRequestError } from '@shared/domain/errors';
 import { IUserFacade } from '@users/infra/facades';
+import { FindFinanceAccountsByUserId } from '@finance-accounts/application/usecases';
+import { IFinanceAccountDataGetway } from '@finance-accounts/infra/data/getways';
 
 describe('FindFinanceAccountsByUserId.UseCase unit tests', () => {
   const mockedInput: FindFinanceAccountsByUserId.Input = {
@@ -25,18 +25,18 @@ describe('FindFinanceAccountsByUserId.UseCase unit tests', () => {
   ];
 
   let sut: FindFinanceAccountsByUserId.UseCase;
-  let mockedFinanceAccountRepo: IFinanceAccountRepository;
+  let mockedFinanceAccountDataGetway: IFinanceAccountDataGetway;
   let mockedUserFacade: IUserFacade;
 
   beforeEach(() => {
-    mockedFinanceAccountRepo = {
+    mockedFinanceAccountDataGetway = {
       findByUserId: jest.fn().mockResolvedValue(mockedOutut),
-    } as any as IFinanceAccountRepository;
+    } as any as IFinanceAccountDataGetway;
     mockedUserFacade = {
       findById: jest.fn().mockResolvedValue({ id: mockedInput.userId }),
     } as any as IUserFacade;
     sut = new FindFinanceAccountsByUserId.UseCase(
-      mockedFinanceAccountRepo,
+      mockedFinanceAccountDataGetway,
       mockedUserFacade,
     );
   });
@@ -50,7 +50,9 @@ describe('FindFinanceAccountsByUserId.UseCase unit tests', () => {
     expect(result).toStrictEqual(mockedOutut);
     expect(sameUser).toBeTruthy();
     expect(mockedUserFacade.findById).toHaveBeenCalledTimes(1);
-    expect(mockedFinanceAccountRepo.findByUserId).toHaveBeenCalledTimes(1);
+    expect(mockedFinanceAccountDataGetway.findByUserId).toHaveBeenCalledTimes(
+      1,
+    );
   });
 
   it('should throw a BadRequestError if there is no user with given userId', async () => {
@@ -69,9 +71,9 @@ describe('FindFinanceAccountsByUserId.UseCase unit tests', () => {
     expect(sut.execute(mockedInput)).rejects.toThrow();
   });
 
-  it('should throw if financeAccountRepo.findByUserId throws', async () => {
+  it('should throw if financeAccountDataGetway.findByUserId throws', async () => {
     jest
-      .spyOn(mockedFinanceAccountRepo, 'findByUserId')
+      .spyOn(mockedFinanceAccountDataGetway, 'findByUserId')
       .mockImplementationOnce(() => {
         throw new Error('');
       });

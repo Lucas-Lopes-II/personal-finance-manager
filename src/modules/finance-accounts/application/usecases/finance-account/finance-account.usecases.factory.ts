@@ -6,6 +6,10 @@ import {
 import { DefaultUseCase } from '@shared/application/usecases';
 import { IUserFacade, UserFacadeFactory } from '@users/infra/facades';
 import {
+  FinanceAccountDataGetwayFactory,
+  IFinanceAccountDataGetway,
+} from '@finance-accounts/infra/data/getways';
+import {
   CreateFinanceAccount,
   AddUserInFinanceAccount,
   FindFinanceAccountsByUserId,
@@ -13,10 +17,6 @@ import {
 } from '@finance-accounts/application/usecases';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
-import {
-  FinanceAccountDataGetwayFactory,
-  IFinanceAccountDataGetway,
-} from '@finance-accounts/infra/data/getways';
 
 export class FinanceAccountUseCasesFactory {
   private static readonly financeAccountRepository: IFinanceAccountRepository =
@@ -52,7 +52,7 @@ export class FinanceAccountUseCasesFactory {
 
   public static findFinanceAccountsByUserId(): FindFinanceAccountsByUserId.UseCase {
     return new FindFinanceAccountsByUserId.UseCase(
-      this.financeAccountRepository,
+      this.financeAccountDataGetway,
       this.userFacade,
     );
   }
