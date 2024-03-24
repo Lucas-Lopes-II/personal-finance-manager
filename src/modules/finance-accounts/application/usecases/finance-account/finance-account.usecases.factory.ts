@@ -13,11 +13,17 @@ import {
 } from '@finance-accounts/application/usecases';
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { FinanceAccountRepositoryFactory } from '@finance-accounts/infra/data/repositories';
+import {
+  FinanceAccountDataGetwayFactory,
+  IFinanceAccountDataGetway,
+} from '@finance-accounts/infra/data/getways';
 
 export class FinanceAccountUseCasesFactory {
   private static readonly financeAccountRepository: IFinanceAccountRepository =
     FinanceAccountRepositoryFactory.create();
   public static readonly userFacade: IUserFacade = UserFacadeFactory.create();
+  public static readonly financeAccountDataGetway: IFinanceAccountDataGetway =
+    FinanceAccountDataGetwayFactory.create();
 
   public static createFinanceAccount(): DefaultUseCase<
     CreateFinanceAccount.Input,
@@ -52,6 +58,6 @@ export class FinanceAccountUseCasesFactory {
   }
 
   public static findFinanceAccountById(): FindFinanceAccountById.UseCase {
-    return new FindFinanceAccountById.UseCase(this.financeAccountRepository);
+    return new FindFinanceAccountById.UseCase(this.financeAccountDataGetway);
   }
 }

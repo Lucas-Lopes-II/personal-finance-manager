@@ -1,6 +1,7 @@
 import { IFinanceAccountRepository } from '@finance-accounts/domain/repositories';
 import { randomUUID } from 'crypto';
 import { FindFinanceAccountById } from '@finance-accounts/application/usecases';
+import { IFinanceAccountDataGetway } from '@finance-accounts/infra/data/getways';
 
 describe('FindFinanceAccountById.UseCase unit tests', () => {
   const mockedInput: FindFinanceAccountById.Input = {
@@ -15,25 +16,25 @@ describe('FindFinanceAccountById.UseCase unit tests', () => {
   };
 
   let sut: FindFinanceAccountById.UseCase;
-  let mockedFinanceAccountRepo: IFinanceAccountRepository;
+  let mockedFinanceAccountDataGetway: IFinanceAccountDataGetway;
 
   beforeEach(() => {
-    mockedFinanceAccountRepo = {
+    mockedFinanceAccountDataGetway = {
       findById: jest.fn().mockResolvedValue(mockedOutut),
     } as any as IFinanceAccountRepository;
-    sut = new FindFinanceAccountById.UseCase(mockedFinanceAccountRepo);
+    sut = new FindFinanceAccountById.UseCase(mockedFinanceAccountDataGetway);
   });
 
   it('should find a FinanceAccount by id', async () => {
     const result = await sut.execute(mockedInput);
 
     expect(result).toStrictEqual(mockedOutut);
-    expect(mockedFinanceAccountRepo.findById).toHaveBeenCalledTimes(1);
+    expect(mockedFinanceAccountDataGetway.findById).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw if userRepo.findById throws', async () => {
+  it('should throw if financeAccountDataGetway.findById throws', async () => {
     jest
-      .spyOn(mockedFinanceAccountRepo, 'findById')
+      .spyOn(mockedFinanceAccountDataGetway, 'findById')
       .mockImplementationOnce(() => {
         throw new Error('');
       });
