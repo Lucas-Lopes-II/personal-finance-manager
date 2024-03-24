@@ -4,6 +4,7 @@ import { CreateMothlyEntryReport } from '@entries/application/usecases';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
+import { BadRequestError } from '@shared/domain/errors';
 
 describe('CreateMothlyEntryReport.UseCase unit tests', () => {
   const mockedInput: CreateMothlyEntryReport.Input = {
@@ -42,5 +43,21 @@ describe('CreateMothlyEntryReport.UseCase unit tests', () => {
     await expect(sut.execute(mockedInput)).resolves.not.toThrow();
     expect(financeAccountFacade.findById).toHaveBeenCalledTimes(1);
     expect(mockedMothlyEntryReportRepo.create).toHaveBeenCalledTimes(1);
+  });
+
+  it('should throw a BadRequestError if there is no account with given accountId', async () => {
+    jest.spyOn(financeAccountFacade, 'findById').mockResolvedValueOnce(null);
+
+    await expect(sut.execute(mockedInput)).rejects.toThrow(
+      new BadRequestError('account do not exists'),
+    );
+  });
+
+  it('should throw if financeAccountFacade.findById throws', async () => {
+    jest.spyOn(financeAccountFacade, 'findById').mockImplementationOnce(() => {
+      throw new Error('');
+    });
+
+    await expect(sut.execute(mockedInput)).rejects.toThrow();
   });
 });

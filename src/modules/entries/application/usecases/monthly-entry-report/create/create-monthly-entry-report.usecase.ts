@@ -4,6 +4,7 @@ import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
 import { CreateMothlyEntryReportService } from '@entries/domain/services';
+import { BadRequestError } from '@shared/domain/errors';
 
 export namespace CreateMothlyEntryReport {
   export type Input = {
@@ -23,15 +24,25 @@ export namespace CreateMothlyEntryReport {
     ) {}
 
     public async execute(input: Input): Promise<Output> {
+      const account = await this.financeAccountFacade.findById({
+        id: input.accountId,
+        selectedfields: ['id'],
+      });
+      if (!account) {
+        throw new BadRequestError('account do not exists');
+      }
+
       const createMothlyEntryReportService = new CreateMothlyEntryReportService(
         this.mothlyEntryReportRepo,
         this.mothlyEntryReportDataGetway,
-        this.financeAccountFacade,
       );
       await createMothlyEntryReportService.create({
         year: input.year,
         month: input.month,
-        accountId: input.accountId,
+        accountData: {
+          id: account.id,
+          users: account.users,
+        },
         actionDoneBy: input.actionDoneBy,
       });
     }

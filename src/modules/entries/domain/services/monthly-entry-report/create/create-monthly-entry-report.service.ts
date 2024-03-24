@@ -1,39 +1,32 @@
+import { Month } from '@shared/domain/enums';
+import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 import {
   IMonthlyEntryReport,
   MonthlyEntryReportFactory,
 } from '@entries/domain/entities';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
-import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
-import { Month } from '@shared/domain/enums';
-import { BadRequestError, ForbiddenError } from '@shared/domain/errors';
 
 export interface CreateMothlyEntryReportDto {
   month: Month;
   year: number;
   actionDoneBy?: string;
-  accountId: string;
+  accountData: {
+    id: string;
+    users: string[];
+  };
 }
 
 export class CreateMothlyEntryReportService {
   constructor(
     private readonly mothlyEntryReportRepo: IMonthlyEntryReportRepository,
     private readonly mothlyEntryReportDataGetway: IMonthlyEntryReportDataGetway,
-    private readonly financeAccountFacade: IFinanceAccountFacade,
   ) {}
 
   public async create(
     data: CreateMothlyEntryReportDto,
   ): Promise<IMonthlyEntryReport> {
-    const account = await this.financeAccountFacade.findById({
-      id: data.accountId,
-      selectedfields: ['id'],
-    });
-    if (!account) {
-      throw new BadRequestError('account do not exists');
-    }
-
-    const actionDoNotDoneByAccountOwner = !account.users.includes(
+    const actionDoNotDoneByAccountOwner = !data.accountData.users.includes(
       data.actionDoneBy,
     );
     if (actionDoNotDoneByAccountOwner) {
@@ -44,7 +37,7 @@ export class CreateMothlyEntryReportService {
       await this.mothlyEntryReportDataGetway.findByYearMonthAndAccount(
         data.year,
         data.month,
-        data.accountId,
+        data.accountData.id,
         ['id'],
       );
     if (mothlyEntryWithReportYearMonthAndAccountExists) {
@@ -54,7 +47,7 @@ export class CreateMothlyEntryReportService {
     }
 
     const mothlyEntryReport = MonthlyEntryReportFactory.create({
-      account: data.accountId,
+      account: data.accountData.id,
       month: data.month,
       year: data.year,
     });

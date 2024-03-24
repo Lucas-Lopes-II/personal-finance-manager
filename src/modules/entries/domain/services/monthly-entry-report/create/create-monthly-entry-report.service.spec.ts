@@ -7,38 +7,31 @@ import {
 } from '@entries/domain/services';
 import { IMonthlyEntryReportRepository } from '@entries/domain/repository';
 import { IMonthlyEntryReportDataGetway } from '@entries/infra/data/getways';
-import { IFinanceAccountFacade } from '@finance-accounts/infra/facades';
 
 describe('MothlyEntryReportService unit tests', () => {
+  const actionDoneBy = randomUUID();
   const mockedInput: CreateMothlyEntryReportDto = {
     month: Month.JANUARY,
     year: 2023,
-    actionDoneBy: randomUUID(),
-    accountId: randomUUID(),
+    actionDoneBy,
+    accountData: { id: randomUUID(), users: [actionDoneBy] },
   };
 
   let sut: CreateMothlyEntryReportService;
   let mockedMothlyEntryReportRepo: IMonthlyEntryReportRepository;
   let mothlyEntryReportDataGetway: IMonthlyEntryReportDataGetway;
-  let financeAccountFacade: IFinanceAccountFacade;
 
   beforeEach(() => {
     mockedMothlyEntryReportRepo = {
       create: jest.fn().mockResolvedValue(undefined),
     } as any as IMonthlyEntryReportRepository;
-    financeAccountFacade = {
-      findById: jest.fn().mockResolvedValue({
-        id: mockedInput.accountId,
-        users: [mockedInput.actionDoneBy],
-      }),
-    } as any as IFinanceAccountFacade;
+
     mothlyEntryReportDataGetway = {
       findByYearMonthAndAccount: jest.fn().mockResolvedValue(null),
     } as any as IMonthlyEntryReportDataGetway;
     sut = new CreateMothlyEntryReportService(
       mockedMothlyEntryReportRepo,
       mothlyEntryReportDataGetway,
-      financeAccountFacade,
     );
   });
 
@@ -46,37 +39,19 @@ describe('MothlyEntryReportService unit tests', () => {
     const result = await sut.create(mockedInput);
 
     expect(result.toJSON()).toBeDefined();
-    expect(financeAccountFacade.findById).toHaveBeenCalledTimes(1);
     expect(mockedMothlyEntryReportRepo.create).toHaveBeenCalledTimes(1);
     expect(
       mothlyEntryReportDataGetway.findByYearMonthAndAccount,
     ).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw a BadRequestError if there is no account with given accountId', async () => {
-    jest.spyOn(financeAccountFacade, 'findById').mockResolvedValueOnce(null);
-
-    await expect(sut.create(mockedInput)).rejects.toThrow(
-      new BadRequestError('account do not exists'),
-    );
-  });
-
-  it('should throw if financeAccountFacade.findById throws', async () => {
-    jest.spyOn(financeAccountFacade, 'findById').mockImplementationOnce(() => {
-      throw new Error('');
-    });
-
-    await expect(sut.create(mockedInput)).rejects.toThrow();
-  });
-
   it('should throw a ForbiddenError if action do not done by account owner', async () => {
-    jest
-      .spyOn(financeAccountFacade, 'findById')
-      .mockResolvedValueOnce({ ...mockedInput, users: [randomUUID()] });
-
-    await expect(sut.create(mockedInput)).rejects.toThrow(
-      new ForbiddenError('Action not allowed'),
-    );
+    await expect(
+      sut.create({
+        ...mockedInput,
+        accountData: { ...mockedInput.accountData, users: [randomUUID()] },
+      }),
+    ).rejects.toThrow(new ForbiddenError('Action not allowed'));
   });
 
   it('should throw a BadRequestError if MothlyEntryReport with given year, month and account already exists', async () => {
