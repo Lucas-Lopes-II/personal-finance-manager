@@ -17,7 +17,7 @@
      "@users/*": ["src/modules/users/*"],
      "@auth/*": ["src/modules/auth/*"],
      "@finance-accounts/*": ["src/modules/finance-accounts/*"],
-     "@entries/*": ["src/modules/entries/*"]
+     "@monthly-entry-report/*": ["src/modules/monthly-entry-report/*"]
     },
     "incremental": true,
     "skipLibCheck": true,
