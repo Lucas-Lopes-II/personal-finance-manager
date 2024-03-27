@@ -1,2 +1,2 @@
-export * from './monthly-entry-report/monthly-entry-report';
+export * from './entry';
 // export * from './';
