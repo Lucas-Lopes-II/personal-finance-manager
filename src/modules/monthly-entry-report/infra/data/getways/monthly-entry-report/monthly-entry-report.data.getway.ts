@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Equal, Repository } from 'typeorm';
 import { Month } from '@shared/domain/enums';
 import { DatabaseUtils } from '@shared/infra/database';
 import { MonthlyEntryReportProps } from '@monthly-entry-report/domain/entities';
@@ -64,5 +64,17 @@ export class MonthlyEntryReportDataGetway
       .getOne();
 
     return data;
+  }
+
+  public async findById(
+    id: string,
+    fields: (keyof MonthlyEntryReportProps)[] = [],
+  ): Promise<MonthlyEntryReportProps | Partial<MonthlyEntryReportProps>> {
+    const select = this.createSelectByFields(fields);
+
+    return this.monthlyEntryReportRepo.findOne({
+      select,
+      where: { id: Equal(id) },
+    });
   }
 }
