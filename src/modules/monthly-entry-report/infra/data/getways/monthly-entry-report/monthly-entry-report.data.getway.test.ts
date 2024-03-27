@@ -105,4 +105,26 @@ describe('MonthlyEntryReportDataGetway integration tests', () => {
       expect(result.account).toBeUndefined();
     });
   });
+
+  describe('findById', () => {
+    it(`should find a MonthlyEntryReport by id`, async () => {
+      await monthlyEntryRepo.save(data);
+      const result = await sut.findById(data.id);
+
+      expect({ ...result }).toStrictEqual(data);
+    });
+
+    it(`should find a MonthlyEntryReport by id with select fields`, async () => {
+      await monthlyEntryRepo.save(data);
+      const result = await sut.findById(data.id, ['id', 'month']);
+
+      expect({ ...result }).toEqual({
+        id: data.id,
+        month: data.month,
+      });
+      expect(result.account).toBeUndefined();
+      expect(result.summary).toBeUndefined();
+      expect(result.year).toBeUndefined();
+    });
+  });
 });
